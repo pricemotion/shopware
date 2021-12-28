@@ -4,6 +4,5 @@ namespace Pricemotion\Shopware;
 
 use Shopware\Core\Framework\Plugin;
 
-class KiboPricemotion extends Plugin
-{
+class KiboPricemotion extends Plugin {
 }

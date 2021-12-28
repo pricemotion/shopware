@@ -1,3 +1,3 @@
-import template from "./sw-product-detail.html.twig";
+import template from './sw-product-detail.html.twig';
 
-Shopware.Component.override("sw-product-detail", { template });
+Shopware.Component.override('sw-product-detail', { template });

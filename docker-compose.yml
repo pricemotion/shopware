@@ -1,4 +1,4 @@
-version: "3.9"
+version: '3.9'
 
 services:
   php:
@@ -14,7 +14,7 @@ services:
   mariadb:
     image: mariadb:10.6
     environment:
-      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "yes"
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'yes'
       MARIADB_DATABASE: shopware
     volumes:
       - mariadb:/var/lib/mysql
