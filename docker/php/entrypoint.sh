@@ -7,8 +7,14 @@ if [[ ! -d /data ]]; then
     exit 1
 fi
 
-usermod -u "$(stat -c %u /data)" www-data
-groupmod -g "$(stat -c %g /data)" www-data
+uid="$(stat -c %u /data)"
+gid="$(stat -c %g /data)"
+
+usermod -u "$uid" www-data
+groupmod -g "$gid" www-data
+
+mkdir -p /var/www/.npm
+chown -R "$uid:$gid" /var/www/.npm
 
 socat TCP-LISTEN:26740,reuseaddr,fork TCP:localhost:80 &
 
