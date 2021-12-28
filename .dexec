@@ -1,0 +1,4 @@
+[dexec]
+container=shopware_php_1
+path=/data
+user=www-data

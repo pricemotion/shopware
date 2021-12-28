@@ -1,0 +1,31 @@
+{
+  "name": "kibo/pricemotion",
+  "description": "Integrate Pricemotion with your Shopware store",
+  "version": "1.0.0",
+  "type": "shopware-platform-plugin",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Pricemotion"
+    }
+  ],
+  "require": {
+    "shopware/core": "6.4.*"
+  },
+  "extra": {
+    "shopware-plugin-class": "Pricemotion\\Shopware\\KiboPricemotion",
+    "label": {
+      "de-DE": "Pricemotion",
+      "en-GB": "Pricemotion"
+    },
+    "description": {
+      "de-DE": "Integrate Pricemotion with your Shopware store",
+      "en-GB": "Integrate Pricemotion with your Shopware store"
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "Pricemotion\\Shopware\\": "src/"
+    }
+  }
+}
