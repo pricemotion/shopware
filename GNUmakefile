@@ -5,5 +5,5 @@ format : node_modules
 .PHONY : format
 
 node_modules : yarn.lock
-	yarn
+	yarn --frozen-lockfile
 	touch $@
