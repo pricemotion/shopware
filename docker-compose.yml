@@ -1,25 +1,25 @@
-version: '3.9'
+version: "3.9"
 
 services:
-    php:
-        build: docker/php
-        volumes:
-            - .:/data
-            - ./docker/php/apache.conf:/etc/apache2/sites-available/000-default.conf
-        ports:
-            - 26740:80
-        links:
-            - mariadb
+  php:
+    build: docker/php
+    volumes:
+      - .:/data
+      - ./docker/php/apache.conf:/etc/apache2/sites-available/000-default.conf
+    ports:
+      - 26740:80
+    links:
+      - mariadb
 
-    mariadb:
-        image: mariadb:10.6
-        environment:
-            MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'yes'
-            MARIADB_DATABASE: shopware
-        volumes:
-            - mariadb:/var/lib/mysql
-        ports:
-            - 26741:3306
+  mariadb:
+    image: mariadb:10.6
+    environment:
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: "yes"
+      MARIADB_DATABASE: shopware
+    volumes:
+      - mariadb:/var/lib/mysql
+    ports:
+      - 26741:3306
 
 volumes:
-    mariadb:
+  mariadb:
