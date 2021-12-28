@@ -8,6 +8,7 @@ Shopware.Module.register('kibo-pricemotion', {
         name: 'sw.product.detail.pricemotion',
         path: '/sw/product/detail/:id/pricemotion',
         component: 'sw-product-detail-pricemotion',
+        props: (route) => ({ productId: route.params.id }),
         meta: {
           parentPath: 'sw.product.index',
         },
