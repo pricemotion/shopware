@@ -29,9 +29,7 @@ Shopware.Component.register('sw-product-detail-pricemotion', {
   methods: {
     async getUrl() {
       if (!this.productId) {
-        console.log(
-          'Pricemotion: Not rendering widget because productId is unset'
-        );
+        console.log('Pricemotion: Not rendering widget because productId is unset');
         return null;
       }
 
@@ -58,22 +56,16 @@ Shopware.Component.register('sw-product-detail-pricemotion', {
     },
     installMessageHandler() {
       const handler = (e) => {
-        if (
-          !this.$refs.iframe ||
-          e.source !== this.$refs.iframe.contentWindow
-        ) {
+        if (!this.$refs.iframe || e.source !== this.$refs.iframe.contentWindow) {
           return;
         }
         const messageOrigin = new URL(e.origin).origin;
         const expectedOrigin = new URL(this.url).origin;
         if (messageOrigin !== expectedOrigin) {
-          console.error(
-            `Got message from origin ${messageOrigin}; expected it from ${expectedOrigin}`
-          );
+          console.error(`Got message from origin ${messageOrigin}; expected it from ${expectedOrigin}`);
           return;
         }
-        const message =
-          typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+        const message = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
         if (message.type === 'setWidgetHeight') {
           this.iframeHeight = message.value;
         } else if (message.type === 'updateProductSettings') {

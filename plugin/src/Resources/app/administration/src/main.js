@@ -19,10 +19,7 @@ Shopware.Module.register('kibo-pricemotion', {
   },
 });
 
-Shopware.Application.addServiceProvider(
-  'pricemotionApiService',
-  (container) => {
-    const init = Shopware.Application.getContainer('init');
-    return new PricemotionApiService(init.httpClient, container.loginService);
-  }
-);
+Shopware.Application.addServiceProvider('pricemotionApiService', (container) => {
+  const init = Shopware.Application.getContainer('init');
+  return new PricemotionApiService(init.httpClient, container.loginService);
+});

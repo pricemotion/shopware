@@ -15,6 +15,8 @@ class ApiController extends AbstractController {
      * @Route("/api/pricemotion/get-widget-url", methods={"POST"})
      */
     public function getWidgetUrl(): JsonResponse {
-        return new JsonResponse(['url' => 'https://www.pricemotion.nl/app/widget']);
+        return new JsonResponse([
+            'url' => 'https://www.pricemotion.nl/app/widget',
+        ]);
     }
 }

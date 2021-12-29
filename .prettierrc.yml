@@ -1,3 +1,4 @@
 phpVersion: '7.4'
 singleQuote: true
 braceStyle: '1tbs'
+printWidth: 120
