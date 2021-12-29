@@ -67,8 +67,7 @@ Component.register('sw-product-detail-pricemotion', {
     this.installMessageHandler();
   },
   async mounted() {
-    console.log('Pricemotion: Retrieve widget URL for product', this.productId);
-    const { url, token } = await this.pricemotionApiService.getWidgetUrl(this.productId);
+    const { url, token } = await this.pricemotionApiService.getWidgetUrl();
     this.baseUrl = url;
     this.token = token;
   },
