@@ -5,10 +5,16 @@
     <services>
         <service id="Pricemotion\Shopware\Controller\ApiController"
                  public="true">
-            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService" />
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
             <call method="setContainer">
                 <argument type="service" id="service_container"/>
             </call>
+        </service>
+        <service id="Pricemotion\Shopware\Extension\Content\Product\PricemotionExtension">
+            <tag name="shopware.entity.extension"/>
+        </service>
+        <service id="Pricemotion\Shopware\Extension\Content\Product\PricemotionProductDefinition">
+            <tag name="shopware.entity.definition" entity="kibo_pricemotion_product" />
         </service>
     </services>
 </container>
