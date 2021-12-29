@@ -18,16 +18,21 @@ Shopware.Component.register('sw-product-detail-pricemotion', {
   data() {
     return {
       url: null,
-      iframeHeight: 0,
+      iframeHeight: 500,
       loading: true,
     };
   },
-  async created() {
+  async mounted() {
     console.log('Pricemotion: Retrieve widget URL for product', this.productId);
     this.url = await this.pricemotionApiService.getWidgetUrl(this.productId);
-  },
-  async mounted() {
-    this.installMessageHandler();
+    if (this.url) {
+      this.installMessageHandler();
+      setTimeout(() => {
+        this.loading = false;
+      }, 5e3);
+    } else {
+      this.loading = false;
+    }
   },
   methods: {
     async getUrl() {
