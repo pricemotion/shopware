@@ -1,8 +1,10 @@
 <iframe
         v-if="url"
+        ref="iframe"
         :src="url"
-        style="
-            border: 0;
-            width: 100%;
-        "
+        :style="{
+            border: 0,
+            width: '100%',
+            height: `${iframeHeight}px`
+        }"
 ></iframe>

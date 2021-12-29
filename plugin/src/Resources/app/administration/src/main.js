@@ -1,5 +1,6 @@
 import './page/sw-product-detail';
 import './view/sw-product-detail-pricemotion';
+import PricemotionApiService from './core/service/api/pricemotion.api.service';
 
 Shopware.Module.register('kibo-pricemotion', {
   routeMiddleware(next, currentRoute) {
@@ -17,3 +18,11 @@ Shopware.Module.register('kibo-pricemotion', {
     next(currentRoute);
   },
 });
+
+Shopware.Application.addServiceProvider(
+  'pricemotionApiService',
+  (container) => {
+    const init = Shopware.Application.getContainer('init');
+    return new PricemotionApiService(init.httpClient, container.loginService);
+  }
+);
