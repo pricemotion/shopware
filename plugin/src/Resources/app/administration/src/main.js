@@ -2,7 +2,9 @@ import './page/sw-product-detail';
 import './view/sw-product-detail-pricemotion';
 import PricemotionApiService from './core/service/api/pricemotion.api.service';
 
-Shopware.Module.register('kibo-pricemotion', {
+const { Module, Application } = Shopware;
+
+Module.register('kibo-pricemotion', {
   routeMiddleware(next, currentRoute) {
     if (currentRoute.name === 'sw.product.detail') {
       currentRoute.children.push({
@@ -19,7 +21,7 @@ Shopware.Module.register('kibo-pricemotion', {
   },
 });
 
-Shopware.Application.addServiceProvider('pricemotionApiService', (container) => {
-  const init = Shopware.Application.getContainer('init');
-  return new PricemotionApiService(init.httpClient, container.loginService);
+Application.addServiceProvider('pricemotionApiService', (container) => {
+  const initContainer = Application.getContainer('init');
+  return new PricemotionApiService(initContainer.httpClient, container.loginService, undefined, initContainer.locale);
 });
