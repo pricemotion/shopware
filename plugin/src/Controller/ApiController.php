@@ -24,7 +24,7 @@ class ApiController extends AbstractController {
     public function getWidgetUrl(): JsonResponse {
         return new JsonResponse([
             'url' => 'https://www.pricemotion.nl/app/widget',
-            'token' => $this->getApiToken()
+            'token' => $this->getApiToken(),
         ]);
     }
 
@@ -37,11 +37,13 @@ class ApiController extends AbstractController {
 
         $expiresAt = time() + 3600;
 
-        return $this->base64encode(implode('', [
-            hash('sha256', $apiKey, true),
-            hash_hmac('sha256', (string) $expiresAt, $apiKey, true),
-            pack('P', $expiresAt),
-        ]));
+        return $this->base64encode(
+            implode('', [
+                hash('sha256', $apiKey, true),
+                hash_hmac('sha256', (string) $expiresAt, $apiKey, true),
+                pack('P', $expiresAt),
+            ]),
+        );
     }
 
     public function getApiKey(): ?string {
