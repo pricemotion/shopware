@@ -18,12 +18,15 @@ Shopware.Component.register('sw-product-detail-pricemotion', {
   data() {
     return {
       url: null,
-      iframeHeight: 250,
+      iframeHeight: 0,
+      loading: true,
     };
   },
   async created() {
     console.log('Pricemotion: Retrieve widget URL for product', this.productId);
     this.url = await this.pricemotionApiService.getWidgetUrl(this.productId);
+  },
+  async mounted() {
     this.installMessageHandler();
   },
   methods: {
@@ -56,18 +59,18 @@ Shopware.Component.register('sw-product-detail-pricemotion', {
     },
     installMessageHandler() {
       const handler = (e) => {
-        if (!this.$refs.iframe || e.source !== this.$refs.iframe.contentWindow) {
+        if (e.source !== this.$refs.iframe.contentWindow) {
           return;
         }
         const messageOrigin = new URL(e.origin).origin;
         const expectedOrigin = new URL(this.url).origin;
         if (messageOrigin !== expectedOrigin) {
-          console.error(`Got message from origin ${messageOrigin}; expected it from ${expectedOrigin}`);
-          return;
+          throw new Error(`Got message from origin ${messageOrigin}; expected it from ${expectedOrigin}`);
         }
         const message = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
         if (message.type === 'setWidgetHeight') {
           this.iframeHeight = message.value;
+          this.loading = false;
         } else if (message.type === 'updateProductSettings') {
           console.log('Update', message);
         }

@@ -1,12 +1,14 @@
-<sw-card>
+<sw-card :large="true">
+    <div v-if="loading" style="padding: 80px 0">
+        <sw-loader />
+    </div>
     <iframe
-        v-if="url"
         ref="iframe"
-        :src="url"
+        :src="url || 'about:blank'"
         :style="{
             border: 0,
             width: '100%',
-            height: `${iframeHeight}px`
+            height: loading ? '0' : `${iframeHeight}px`
         }"
     ></iframe>
 </sw-card>
