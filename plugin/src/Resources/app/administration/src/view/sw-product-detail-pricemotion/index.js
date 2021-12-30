@@ -2,6 +2,7 @@ import template from './sw-product-detail-pricemotion.html.twig';
 
 const { Component, Context } = Shopware;
 const { mapState } = Component.getComponentHelper();
+const cacheBuster = Date.now();
 
 Component.register('sw-product-detail-pricemotion', {
   template,
@@ -10,7 +11,7 @@ Component.register('sw-product-detail-pricemotion', {
       title: 'Pricemotion',
     };
   },
-  inject: ['pricemotionApiService'],
+  inject: ['pricemotionApiService', 'repositoryFactory'],
   props: {
     productId: {
       type: String,
@@ -20,7 +21,7 @@ Component.register('sw-product-detail-pricemotion', {
   },
   data() {
     return {
-      baseUrl: null,
+      url: null,
       iframeHeight: 500,
       loading: true,
     };
@@ -29,19 +30,6 @@ Component.register('sw-product-detail-pricemotion', {
     ...mapState('swProductDetail', ['product']),
     ean() {
       return (this.product?.ean || '').replace(/^\s+|\s+$/g, '');
-    },
-    url() {
-      if (!this.baseUrl) {
-        return null;
-      }
-      return (
-        this.baseUrl +
-        '#' +
-        JSON.stringify({
-          token: this.token,
-          ean: this.ean,
-        })
-      );
     },
   },
   watch: {
@@ -67,45 +55,27 @@ Component.register('sw-product-detail-pricemotion', {
     this.installMessageHandler();
   },
   async mounted() {
-    const { url, token } = await this.pricemotionApiService.getWidgetUrl();
-    this.baseUrl = url;
-    this.token = token;
+    const { url: baseUrl, token } = await this.pricemotionApiService.getWidgetUrl();
+    const url = new URL(baseUrl);
+    url.search = new URLSearchParams({
+      t: cacheBuster,
+      assetVersion: '1.3',
+    }).toString();
+    url.hash = JSON.stringify({
+      token,
+      ean: this.ean,
+      settings: this.getExtension().settings,
+    });
+    this.url = url.toString();
   },
   methods: {
-    async getUrl() {
-      if (!this.productId) {
-        console.log('Pricemotion: Not rendering widget because productId is unset');
-        return null;
-      }
-
-      const context = Context.api;
-
-      const response = await this.httpClient.post(
-        '/pricemotion/widgetUrl',
-        { productId: this.productId },
-        {
-          headers: {
-            Accept: 'application/vnd.api+json',
-            Authorization: `Bearer ${context.authToken.access}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-
-      if (!response || !response.url) {
-        console.log('Pricemotion: No URL in response');
-        return null;
-      }
-
-      return response.url;
-    },
     installMessageHandler() {
       const handler = (e) => {
         if (!this.$refs.iframe || e.source !== this.$refs.iframe.contentWindow) {
           return;
         }
         const messageOrigin = new URL(e.origin).origin;
-        const expectedOrigin = new URL(this.baseUrl).origin;
+        const expectedOrigin = new URL(this.url).origin;
         if (messageOrigin !== expectedOrigin) {
           throw new Error(`Got message from origin ${messageOrigin}; expected it from ${expectedOrigin}`);
         }
@@ -114,7 +84,9 @@ Component.register('sw-product-detail-pricemotion', {
           this.iframeHeight = message.value;
           this.loading = false;
         } else if (message.type === 'updateProductSettings') {
-          console.log('Update', message);
+          if (message.isValid) {
+            this.getExtension().settings = message.value;
+          }
         }
       };
 
@@ -122,6 +94,11 @@ Component.register('sw-product-detail-pricemotion', {
       this.$once('hook:beforeDestroy', () => {
         removeEventListener('message', handler);
       });
+    },
+    getExtension() {
+      return (this.product.extensions.pricemotion ??= this.repositoryFactory
+        .create('kibo_pricemotion_product')
+        .create());
     },
   },
 });
