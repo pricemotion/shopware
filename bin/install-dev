@@ -7,4 +7,4 @@ ln -sfnr plugin shopware/custom/plugins/KiboPricemotion
 
 dexec shopware/bin/console plugin:refresh
 dexec shopware/bin/console plugin:install --activate KiboPricemotion
-dexec shopware/bin/console cache:clear
+bin/clear-cache
