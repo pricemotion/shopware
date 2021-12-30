@@ -13,8 +13,7 @@ gid="$(stat -c %g /data)"
 usermod -u "$uid" www-data
 groupmod -g "$gid" www-data
 
-mkdir -p /var/www/.npm
-chown -R "$uid:$gid" /var/www/.npm
+chown -R "$uid:$gid" /var/www
 
 socat TCP-LISTEN:26740,reuseaddr,fork TCP:localhost:80 &
 
