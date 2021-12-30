@@ -7,14 +7,16 @@ use Shopware\Core\Framework\DataAbstractionLayer\EntityExtension;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\OneToOneAssociationField;
 use Shopware\Core\Framework\DataAbstractionLayer\FieldCollection;
 
-class PricemotionExtension extends EntityExtension {
+class PricemotionProductExtension extends EntityExtension {
+    const NAME = 'pricemotion';
+
     public function getDefinitionClass(): string {
         return ProductDefinition::class;
     }
 
     public function extendFields(FieldCollection $collection): void {
         $collection->add(
-            new OneToOneAssociationField('pricemotionProduct', 'id', 'product_id', PricemotionProductDefinition::class),
+            new OneToOneAssociationField(self::NAME, 'id', 'product_id', PricemotionProductDefinition::class),
         );
     }
 }
