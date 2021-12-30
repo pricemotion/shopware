@@ -4,7 +4,7 @@ namespace Pricemotion\Shopware;
 
 use Shopware\Core\Framework\Plugin;
 use Shopware\Core\Framework\Plugin\Context\UninstallContext;
-use Shopware\Production\Kernel;
+use Shopware\Core\Kernel;
 
 class KiboPricemotion extends Plugin {
     public function uninstall(UninstallContext $uninstallContext): void {
