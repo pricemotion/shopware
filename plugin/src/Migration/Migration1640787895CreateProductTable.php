@@ -5,15 +5,12 @@ namespace Pricemotion\Shopware\Migration;
 use Doctrine\DBAL\Connection;
 use Shopware\Core\Framework\Migration\MigrationStep;
 
-class Migration1640787895CreateProductTable extends MigrationStep
-{
-    public function getCreationTimestamp(): int
-    {
+class Migration1640787895CreateProductTable extends MigrationStep {
+    public function getCreationTimestamp(): int {
         return 1640787895;
     }
 
-    public function update(Connection $connection): void
-    {
+    public function update(Connection $connection): void {
         $connection->executeStatement("
             CREATE TABLE kibo_pricemotion_product (
                 product_id BINARY(16) NOT NULL,
@@ -28,7 +25,6 @@ class Migration1640787895CreateProductTable extends MigrationStep
         ");
     }
 
-    public function updateDestructive(Connection $connection): void
-    {
+    public function updateDestructive(Connection $connection): void {
     }
 }

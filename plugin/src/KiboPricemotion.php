@@ -14,6 +14,6 @@ class KiboPricemotion extends Plugin {
             return;
         }
 
-        Kernel::getConnection()->executeStatement("DROP TABLE IF EXISTS kibo_pricemotion_product");
+        Kernel::getConnection()->executeStatement('DROP TABLE IF EXISTS kibo_pricemotion_product');
     }
 }

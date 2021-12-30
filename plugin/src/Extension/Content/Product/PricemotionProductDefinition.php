@@ -23,7 +23,10 @@ class PricemotionProductDefinition extends EntityDefinition {
 
     protected function defineFields(): FieldCollection {
         return new FieldCollection([
-            (new FkField('product_id', 'productId', ProductDefinition::class))->addFlags(new Required(), new PrimaryKey()),
+            (new FkField('product_id', 'productId', ProductDefinition::class))->addFlags(
+                new Required(),
+                new PrimaryKey(),
+            ),
             new OneToOneAssociationField('product', 'product_id', 'id', ProductDefinition::class, false),
             new DateTimeField('applied_at', 'appliedAt'),
             new JsonField('settings', 'settings'),
