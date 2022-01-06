@@ -2,6 +2,8 @@
 
 namespace Pricemotion\Shopware\Controller;
 
+use Pricemotion\Shopware\KiboPricemotion;
+use Pricemotion\Shopware\Util\Base64;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -37,25 +39,16 @@ class ApiController extends AbstractController {
 
         $expiresAt = time() + 3600;
 
-        return $this->base64encode(
+        return Base64::encode(
             implode('', [
                 hash('sha256', $apiKey, true),
-                hash_hmac('sha256', (string) $expiresAt, $apiKey, true),
+                hash_hmac('sha256', (string)$expiresAt, $apiKey, true),
                 pack('P', $expiresAt),
             ]),
         );
     }
 
     public function getApiKey(): ?string {
-        return trim($this->systemConfigService->getString('KiboPricemotion.config.apiKey')) ?: null;
-    }
-
-    private function base64encode(string $data): string {
-        $result = base64_encode($data);
-        $result = rtrim($result, '=');
-        return strtr($result, [
-            '+' => '-',
-            '/' => '_',
-        ]);
+        return trim($this->systemConfigService->getString(KiboPricemotion::CONFIG_API_KEY)) ?: null;
     }
 }

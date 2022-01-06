@@ -7,6 +7,8 @@ use Shopware\Core\Framework\Plugin\Context\UninstallContext;
 use Shopware\Core\Kernel;
 
 class KiboPricemotion extends Plugin {
+    const CONFIG_API_KEY = 'KiboPricemotion.config.apiKey';
+
     public function uninstall(UninstallContext $uninstallContext): void {
         parent::uninstall($uninstallContext);
 
