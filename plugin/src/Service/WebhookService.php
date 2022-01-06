@@ -15,7 +15,7 @@ class WebhookService {
     private HttpClientInterface $httpClient;
 
     private UrlGeneratorInterface $urlGenerator;
-    
+
     public function __construct(
         SystemConfigService $config,
         HttpClientInterface $httpClient,
@@ -44,7 +44,7 @@ class WebhookService {
     private function getApiKey(): string {
         $apiKey = trim($this->config->getString(KiboPricemotion::CONFIG_API_KEY));
         if (empty($apiKey)) {
-            throw new ConfigurationException("No API key is configured");
+            throw new ConfigurationException('No API key is configured');
         }
         return $apiKey;
     }

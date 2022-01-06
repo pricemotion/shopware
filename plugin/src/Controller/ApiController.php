@@ -42,7 +42,7 @@ class ApiController extends AbstractController {
         return Base64::encode(
             implode('', [
                 hash('sha256', $apiKey, true),
-                hash_hmac('sha256', (string)$expiresAt, $apiKey, true),
+                hash_hmac('sha256', (string) $expiresAt, $apiKey, true),
                 pack('P', $expiresAt),
             ]),
         );

@@ -7,7 +7,6 @@ use Shopware\Core\Framework\MessageQueue\Handler\AbstractMessageHandler;
 
 class ConfigureWebhookHandler extends AbstractMessageHandler {
     public function handle($message): void {
-
     }
 
     public static function getHandledMessages(): iterable {
