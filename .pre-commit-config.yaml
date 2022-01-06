@@ -9,4 +9,3 @@ repos:
     rev: fa6fa232b28cd13a55b33d0fabf15948d688f19e
     hooks:
       - id: phan
-        always_run: true
