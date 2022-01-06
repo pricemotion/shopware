@@ -1,6 +1,5 @@
 {
   "require": {
-    "phan/phan": "^5.3",
     "drenso/phan-extensions": "^3.5"
   }
 }
