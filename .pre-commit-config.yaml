@@ -3,3 +3,4 @@ repos:
     rev: ea782651a7e32f40a3d13b76c79d5a2474ee8723
     hooks:
       - id: prettier
+        args: ['--plugin=@prettier/plugin-php']
