@@ -4,3 +4,4 @@ repos:
     hooks:
       - id: prettier
         args: ['--plugin=@prettier/plugin-php']
+        additional_dependencies: ['@prettier/plugin-php@0.17.6']
