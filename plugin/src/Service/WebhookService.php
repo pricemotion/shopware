@@ -32,14 +32,25 @@ class WebhookService {
         $client = new Client();
         $webhookUrl = $this->getWebhookUrl();
         $requestOptions = [
-            'auth_basic' => [$this->getApiKey(), ''],
+            'auth' => [$this->getApiKey(), ''],
             'json' => [
                 'url' => $webhookUrl,
             ],
+            'connect_timeout' => 10,
+            'read_timeout' => 10,
         ];
         try {
             $client->request('POST', 'https://www.pricemotion.nl/api/webhooks', $requestOptions);
         } catch (ClientException $e) {
+            $this->logger->notice(
+                sprintf(
+                    "Caught %s when trying to add webhook with URL '%s': (%s) %s",
+                    get_class($e),
+                    $webhookUrl,
+                    (string) $e->getCode(),
+                    $e->getMessage(),
+                ),
+            );
             if ($e->getResponse()->getStatusCode() === 401) {
                 throw new ConfigurationException('API key is invalid');
             }
@@ -49,9 +60,13 @@ class WebhookService {
     }
 
     private function getWebhookUrl(): string {
-        return $this->urlGenerator->generate('pricemotion.webhook', [
-            'apiKeyDigest' => Base64::encode(hash('sha256', $this->getApiKey(), true)),
-        ]);
+        return $this->urlGenerator->generate(
+            'pricemotion.webhook',
+            [
+                'apiKeyDigest' => Base64::encode(hash('sha256', $this->getApiKey(), true)),
+            ],
+            UrlGeneratorInterface::ABSOLUTE_URL,
+        );
     }
 
     private function getApiKey(): string {
