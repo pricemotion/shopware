@@ -7,6 +7,7 @@ $vendor = [
     'shopware/vendor/psr/log',
     'shopware/vendor/shopware/core',
     'shopware/vendor/symfony/console',
+    'shopware/vendor/symfony/dependency-injection',
     'shopware/vendor/symfony/event-dispatcher',
     'shopware/vendor/symfony/framework-bundle',
     'shopware/vendor/symfony/http-client-contracts',

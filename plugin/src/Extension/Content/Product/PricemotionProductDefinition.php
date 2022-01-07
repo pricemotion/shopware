@@ -13,8 +13,10 @@ use Shopware\Core\Framework\DataAbstractionLayer\Field\OneToOneAssociationField;
 use Shopware\Core\Framework\DataAbstractionLayer\FieldCollection;
 
 class PricemotionProductDefinition extends EntityDefinition {
+    const ENTITY_NAME = 'kibo_pricemotion_product';
+
     public function getEntityName(): string {
-        return 'kibo_pricemotion_product';
+        return self::ENTITY_NAME;
     }
 
     public function getEntityClass(): string {
