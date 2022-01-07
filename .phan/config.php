@@ -2,6 +2,9 @@
 
 $vendor = [
     'shopware/vendor/doctrine/dbal/lib',
+    'shopware/vendor/guzzlehttp/guzzle/src',
+    'shopware/vendor/psr/http-message',
+    'shopware/vendor/psr/log',
     'shopware/vendor/shopware/core',
     'shopware/vendor/symfony/console',
     'shopware/vendor/symfony/event-dispatcher',

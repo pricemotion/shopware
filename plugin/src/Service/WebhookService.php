@@ -2,37 +2,50 @@
 
 namespace Pricemotion\Shopware\Service;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 use Pricemotion\Shopware\Exception\ConfigurationException;
 use Pricemotion\Shopware\KiboPricemotion;
 use Pricemotion\Shopware\Util\Base64;
+use Psr\Log\LoggerInterface;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class WebhookService {
     private SystemConfigService $config;
 
-    private HttpClientInterface $httpClient;
-
     private UrlGeneratorInterface $urlGenerator;
+
+    private LoggerInterface $logger;
 
     public function __construct(
         SystemConfigService $config,
-        HttpClientInterface $httpClient,
-        UrlGeneratorInterface $urlGenerator
+        UrlGeneratorInterface $urlGenerator,
+        LoggerInterface $logger
     ) {
         $this->config = $config;
-        $this->httpClient = $httpClient;
         $this->urlGenerator = $urlGenerator;
+        $this->logger = $logger;
     }
 
     public function registerWebhook(): void {
-        $this->httpClient->request('POST', 'https://www.pricemotion.nl/api/webhooks', [
+        $client = new Client();
+        $webhookUrl = $this->getWebhookUrl();
+        $requestOptions = [
             'auth_basic' => [$this->getApiKey(), ''],
             'json' => [
-                'url' => $this->urlGenerator->generate('pricemotion.webhook'),
+                'url' => $webhookUrl,
             ],
-        ]);
+        ];
+        try {
+            $client->request('POST', 'https://www.pricemotion.nl/api/webhooks', $requestOptions);
+        } catch (ClientException $e) {
+            if ($e->getResponse()->getStatusCode() === 401) {
+                throw new ConfigurationException('API key is invalid');
+            }
+            throw $e;
+        }
+        $this->logger->info(sprintf('Registered Pricemotion webhook with URL %s', $webhookUrl));
     }
 
     private function getWebhookUrl(): string {
