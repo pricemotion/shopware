@@ -1,6 +1,6 @@
 import template from './sw-product-detail-pricemotion.html.twig';
 
-const { Component, Context } = Shopware;
+const { Component } = Shopware;
 const { mapState } = Component.getComponentHelper();
 const cacheBuster = Date.now();
 let widgetUrlPromise;

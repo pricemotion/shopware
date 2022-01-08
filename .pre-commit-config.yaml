@@ -13,3 +13,7 @@ repos:
     rev: b762b86f28cb684ac10287ecb0e4420d5c320ab3
     hooks:
       - id: shellcheck
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: 534492d910ad4a4d484470b5aa0d51f1274eab1e
+    hooks:
+      - id: eslint

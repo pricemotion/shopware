@@ -1,0 +1,12 @@
+extends: eslint:recommended
+env:
+  browser: true
+  es2021: true
+parserOptions:
+  sourceType: module
+globals:
+  Shopware: readonly
+rules:
+  no-empty:
+    - error
+    - allowEmptyCatch: true

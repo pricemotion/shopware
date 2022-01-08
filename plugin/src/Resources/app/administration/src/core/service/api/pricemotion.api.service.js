@@ -1,7 +1,5 @@
 import ApiService from 'src/core/service/api.service';
 
-const { Application } = Shopware;
-
 export default class PricemotionApiService extends ApiService {
   constructor(httpClient, loginService, apiEndpoint = 'pricemotion') {
     super(httpClient, loginService, apiEndpoint);
