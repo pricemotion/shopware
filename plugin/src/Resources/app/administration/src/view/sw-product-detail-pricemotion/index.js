@@ -3,6 +3,7 @@ import template from './sw-product-detail-pricemotion.html.twig';
 const { Component, Context } = Shopware;
 const { mapState } = Component.getComponentHelper();
 const cacheBuster = Date.now();
+let widgetUrlPromise;
 
 Component.register('sw-product-detail-pricemotion', {
   template,
@@ -55,7 +56,7 @@ Component.register('sw-product-detail-pricemotion', {
     this.installMessageHandler();
   },
   async mounted() {
-    const { url: baseUrl, token } = await this.pricemotionApiService.getWidgetUrl();
+    const { url: baseUrl, token } = await this.getWidgetUrl();
     const url = new URL(baseUrl);
     url.search = new URLSearchParams({
       t: cacheBuster,
@@ -99,6 +100,16 @@ Component.register('sw-product-detail-pricemotion', {
       return (this.product.extensions.pricemotion ??= this.repositoryFactory
         .create('kibo_pricemotion_product')
         .create());
+    },
+    getWidgetUrl() {
+      if (widgetUrlPromise) {
+        return widgetUrlPromise;
+      }
+      widgetUrlPromise = this.pricemotionApiService.getWidgetUrl();
+      widgetUrlPromise.catch(() => {
+        widgetUrlPromise = undefined;
+      });
+      return widgetUrlPromise;
     },
   },
 });
