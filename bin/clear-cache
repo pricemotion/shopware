@@ -3,4 +3,4 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-dexec find shopware/var/cache -type f -delete
+find shopware/var/cache -type f -delete
