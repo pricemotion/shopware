@@ -12,6 +12,7 @@ $vendor = [
     'shopware/vendor/symfony/framework-bundle',
     'shopware/vendor/symfony/http-client-contracts',
     'shopware/vendor/symfony/http-foundation',
+    'shopware/vendor/symfony/http-kernel',
     'shopware/vendor/symfony/messenger',
     'shopware/vendor/symfony/routing',
 ];
