@@ -9,3 +9,7 @@ repos:
     rev: e56968f2b00d19c3c8d3ee113b9d7255eca7cccd
     hooks:
       - id: phan
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: b762b86f28cb684ac10287ecb0e4420d5c320ab3
+    hooks:
+      - id: shellcheck
