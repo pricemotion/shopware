@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Pricemotion\Shopware;
 
@@ -8,6 +8,7 @@ use Pricemotion\Shopware\Extension\Content\Product\PricemotionProductDefinition;
 use Pricemotion\Shopware\Extension\Content\Product\PricemotionProductExtension;
 use Pricemotion\Shopware\MessageQueue\Handler\ConfigureWebhookHandler;
 use Pricemotion\Shopware\Subscriber\ConfigSubscriber;
+use Pricemotion\Shopware\Subscriber\ProductWriteSubscriber;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 
 return function (ContainerConfigurator $configurator): void {
@@ -23,6 +24,7 @@ return function (ContainerConfigurator $configurator): void {
     $services->set(PricemotionProductDefinition::class)->tag('shopware.entity.definition');
 
     $services->set(ConfigSubscriber::class)->tag('kernel.event_subscriber');
+    $services->set(ProductWriteSubscriber::class)->tag('kernel.event_subscriber');
 
     $services->set(ConfigureWebhookHandler::class)->tag('messenger.message_handler');
 

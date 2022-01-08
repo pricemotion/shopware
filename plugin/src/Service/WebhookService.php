@@ -7,6 +7,7 @@ use GuzzleHttp\Exception\ClientException;
 use Pricemotion\Shopware\Exception\ConfigurationException;
 use Pricemotion\Shopware\KiboPricemotion;
 use Pricemotion\Shopware\Util\Base64;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -17,6 +18,8 @@ class WebhookService {
     private UrlGeneratorInterface $urlGenerator;
 
     private LoggerInterface $logger;
+
+    private Client $httpClient;
 
     public function __construct(
         SystemConfigService $config,
@@ -29,33 +32,10 @@ class WebhookService {
     }
 
     public function registerWebhook(): void {
-        $client = new Client();
         $webhookUrl = $this->getWebhookUrl();
-        $requestOptions = [
-            'auth' => [$this->getApiKey(), ''],
-            'json' => [
-                'url' => $webhookUrl,
-            ],
-            'connect_timeout' => 10,
-            'read_timeout' => 10,
-        ];
-        try {
-            $client->request('POST', 'https://www.pricemotion.nl/api/webhooks', $requestOptions);
-        } catch (ClientException $e) {
-            $this->logger->notice(
-                sprintf(
-                    "Caught %s when trying to add webhook with URL '%s': (%s) %s",
-                    get_class($e),
-                    $webhookUrl,
-                    (string) $e->getCode(),
-                    $e->getMessage(),
-                ),
-            );
-            if ($e->getResponse()->getStatusCode() === 401) {
-                throw new ConfigurationException('API key is invalid');
-            }
-            throw $e;
-        }
+        $this->post('/webhooks', [
+            'url' => $webhookUrl,
+        ]);
         $this->logger->info(sprintf('Registered Pricemotion webhook with URL %s', $webhookUrl));
     }
 
@@ -75,5 +55,30 @@ class WebhookService {
             throw new ConfigurationException('No API key is configured');
         }
         return $apiKey;
+    }
+
+    public function trigger(string $ean): void {
+        $this->post('/webhooks/trigger', ['ean' => $ean]);
+    }
+
+    private function post(string $path, array $data): ResponseInterface {
+        $requestOptions = [
+            'auth' => [$this->getApiKey(), ''],
+            'json' => $data,
+            'connect_timeout' => 10,
+            'read_timeout' => 10,
+        ];
+        try {
+            return $this->getHttpClient()->request('POST', 'https://www.pricemotion.nl/api' . $path, $requestOptions);
+        } catch (ClientException $e) {
+            if ($e->getResponse()->getStatusCode() === 401) {
+                throw new ConfigurationException('API key is invalid');
+            }
+            throw $e;
+        }
+    }
+
+    private function getHttpClient(): Client {
+        return $this->httpClient ??= new Client();
     }
 }
