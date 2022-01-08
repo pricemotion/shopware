@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 
 set -euo pipefail
-cd "$(dirname "$0")/.."
 
-export PROJECT_ROOT="$PWD/shopware"
+root="$(cd "$(dirname "$0")/.." && pwd)"
+if [[ $root != /data ]]; then
+	exec dexec "$0" "$@"
+fi
 
-(
-	cd "$PROJECT_ROOT/vendor/shopware/administration/Resources/app/administration"
-	npm run build
-)
+cd "$root/shopware/vendor/shopware/administration/Resources/app/administration"
+PROJECT_ROOT="$root/shopware" npm run build
 
-"$PROJECT_ROOT/bin/console" asset:install
+cd "$root/shopware"
+bin/console asset:install
