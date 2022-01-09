@@ -7,6 +7,7 @@ $vendor = [
     'shopware/vendor/psr/http-message',
     'shopware/vendor/psr/log',
     'shopware/vendor/shopware/core',
+    'shopware/vendor/symfony/cache-contracts',
     'shopware/vendor/symfony/console',
     'shopware/vendor/symfony/dependency-injection',
     'shopware/vendor/symfony/event-dispatcher',
@@ -22,7 +23,10 @@ return [
     'target_php_version' => '7.4',
     'directory_list' => ['plugin', ...$vendor],
     'exclude_analysis_directory_list' => $vendor,
-    'exclude_file_regex' => '~^plugin/src/Command/TestCommand\.php$~',
+    'exclude_file_regex' => '~
+        ^plugin/src/Command/TestCommand\.php$ |
+        ^plugin/sdk/vendor/
+    ~x',
     'plugins' => [
         'AlwaysReturnPlugin',
         'DollarDollarPlugin',

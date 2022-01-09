@@ -4,9 +4,7 @@ namespace Pricemotion\Shopware\Subscriber;
 
 use Pricemotion\Sdk\Data\Ean;
 use Pricemotion\Sdk\InvalidArgumentException;
-use Pricemotion\Shopware\Extension\Content\Product\PricemotionProductDefinition;
 use Pricemotion\Shopware\Extension\Content\Product\PricemotionProductExtension;
-use Pricemotion\Shopware\MessageQueue\Message\ProductWrittenMessage;
 use Shopware\Core\Content\Product\ProductEntity;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
@@ -14,7 +12,6 @@ use Shopware\Core\Framework\DataAbstractionLayer\Event\EntityWrittenContainerEve
 use Shopware\Core\Framework\DataAbstractionLayer\Event\EntityWrittenEvent;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Messenger\MessageBusInterface;
 
 class ProductEanNormalizer implements EventSubscriberInterface {
     private EntityRepositoryInterface $productRepository;

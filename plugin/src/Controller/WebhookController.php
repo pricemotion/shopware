@@ -6,6 +6,7 @@ use Pricemotion\Sdk\Api\WebhookRequestFactory;
 use Pricemotion\Sdk\Crypto\SignatureVerifier;
 use Pricemotion\Sdk\RuntimeException;
 use Pricemotion\Shopware\KiboPricemotion;
+use Pricemotion\Shopware\Service\ProductUpdateService;
 use Pricemotion\Shopware\Util\Base64;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -25,9 +26,16 @@ class WebhookController extends AbstractController {
 
     private CacheInterface $cache;
 
-    public function __construct(SystemConfigService $config, CacheInterface $cache) {
+    private ProductUpdateService $productUpdateService;
+
+    public function __construct(
+        SystemConfigService $config,
+        CacheInterface $cache,
+        ProductUpdateService $productUpdateService
+    ) {
         $this->config = $config;
         $this->cache = $cache;
+        $this->productUpdateService = $productUpdateService;
     }
 
     /**
@@ -50,7 +58,7 @@ class WebhookController extends AbstractController {
             throw new BadRequestException();
         }
 
-        $this->updateProduct($request->getProduct());
+        $this->productUpdateService->updateProducts($request->getProduct());
 
         return new Response();
     }
