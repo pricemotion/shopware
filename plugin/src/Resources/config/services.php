@@ -20,7 +20,7 @@ return function (ContainerConfigurator $configurator): void {
     $services->instanceof(EventSubscriberInterface::class)->tag('kernel.event_subscriber');
     $services->instanceof(MessageHandlerInterface::class)->tag('messenger.message_handler');
 
-    $services->load('Pricemotion\\Shopware\\', dirname(__DIR__, 2) . '/*');
+    $services->load('Pricemotion\\Shopware\\', '../src/*');
 
     $services->set(PricemotionProductExtension::class)->tag('shopware.entity.extension');
     $services->set(PricemotionProductDefinition::class)->tag('shopware.entity.definition');

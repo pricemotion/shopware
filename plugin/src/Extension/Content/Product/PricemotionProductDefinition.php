@@ -8,8 +8,10 @@ use Shopware\Core\Framework\DataAbstractionLayer\Field\DateTimeField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\FkField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\PrimaryKey;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\Required;
+use Shopware\Core\Framework\DataAbstractionLayer\Field\IntField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\JsonField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\OneToOneAssociationField;
+use Shopware\Core\Framework\DataAbstractionLayer\Field\StringField;
 use Shopware\Core\Framework\DataAbstractionLayer\FieldCollection;
 
 class PricemotionProductDefinition extends EntityDefinition {
@@ -30,8 +32,9 @@ class PricemotionProductDefinition extends EntityDefinition {
                 new PrimaryKey(),
             ),
             new OneToOneAssociationField('product', 'product_id', 'id', ProductDefinition::class, false),
-            new DateTimeField('applied_at', 'appliedAt'),
+            new StringField('ean', 'ean'),
             new JsonField('settings', 'settings'),
+            new DateTimeField('applied_at', 'appliedAt'),
         ]);
     }
 }

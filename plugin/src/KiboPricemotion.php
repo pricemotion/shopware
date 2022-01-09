@@ -6,6 +6,8 @@ use Shopware\Core\Framework\Plugin;
 use Shopware\Core\Framework\Plugin\Context\UninstallContext;
 use Shopware\Core\Kernel;
 
+require_once __DIR__ . '/../sdk/autoload.php';
+
 class KiboPricemotion extends Plugin {
     const CONFIG_API_KEY = 'KiboPricemotion.config.apiKey';
 

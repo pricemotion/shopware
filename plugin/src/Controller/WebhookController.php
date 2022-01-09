@@ -2,6 +2,9 @@
 
 namespace Pricemotion\Shopware\Controller;
 
+use Pricemotion\Sdk\Api\WebhookRequestFactory;
+use Pricemotion\Sdk\Crypto\SignatureVerifier;
+use Pricemotion\Sdk\RuntimeException;
 use Pricemotion\Shopware\KiboPricemotion;
 use Pricemotion\Shopware\Util\Base64;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
@@ -12,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Cache\CacheInterface;
 
 /**
  * @RouteScope(scopes={"api"})
@@ -19,8 +23,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class WebhookController extends AbstractController {
     private SystemConfigService $config;
 
-    public function __construct(SystemConfigService $config) {
+    private CacheInterface $cache;
+
+    public function __construct(SystemConfigService $config, CacheInterface $cache) {
         $this->config = $config;
+        $this->cache = $cache;
     }
 
     /**
@@ -34,14 +41,17 @@ class WebhookController extends AbstractController {
             throw new NotFoundHttpException();
         }
 
-        $data = $request->toArray();
+        $signatureVerifier = new SignatureVerifier($this->cache);
+        $webhookRequestFactory = new WebhookRequestFactory($signatureVerifier);
 
-        if (empty($data['xml'])) {
+        try {
+            $request = $webhookRequestFactory->createFromRequestBody($request->getContent());
+        } catch (RuntimeException $e) {
             throw new BadRequestException();
         }
 
-        // TODO -- Validate that the webhook is triggered for the right user (by API key)
-        // eg, by hashing and including the API key in the webhook URL
+        $this->updateProduct($request->getProduct());
+
         return new Response();
     }
 }

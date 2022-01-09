@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 $vendor = [
+    'plugin/sdk',
     'shopware/vendor/doctrine/dbal/lib',
     'shopware/vendor/guzzlehttp/guzzle/src',
     'shopware/vendor/psr/http-message',
