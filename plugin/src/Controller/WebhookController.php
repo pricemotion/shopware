@@ -8,13 +8,12 @@ use Pricemotion\Sdk\RuntimeException;
 use Pricemotion\Shopware\KiboPricemotion;
 use Pricemotion\Shopware\Service\ProductUpdateService;
 use Pricemotion\Shopware\Util\Base64;
+use Psr\Log\LoggerInterface;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Shopware\Core\Framework\Routing\Annotation\RouteScope;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\Cache\CacheInterface;
 
@@ -28,25 +27,29 @@ class WebhookController extends AbstractController {
 
     private ProductUpdateService $productUpdateService;
 
+    private LoggerInterface $logger;
+
     public function __construct(
         SystemConfigService $config,
         CacheInterface $cache,
-        ProductUpdateService $productUpdateService
+        ProductUpdateService $productUpdateService,
+        LoggerInterface $logger
     ) {
         $this->config = $config;
         $this->cache = $cache;
         $this->productUpdateService = $productUpdateService;
+        $this->logger = $logger;
     }
 
     /**
-     * @Route("/api/pricemotion/webhook", methods={"POST"}, name="pricemotion.webhook")
+     * @Route("/api/pricemotion/webhook", name="pricemotion.webhook", defaults={"auth_required"=false}, methods={"POST"})
      */
     public function webhook(Request $request): Response {
         $apiKey = trim($this->config->getString(KiboPricemotion::CONFIG_API_KEY));
         $apiKeyDigest = Base64::encode(hash('sha256', $apiKey, true));
 
         if ($request->query->get('apiKeyDigest') !== $apiKeyDigest) {
-            throw new NotFoundHttpException();
+            return new Response('API key mismatch', 404, ['Content-Type' => 'text/plain']);
         }
 
         $signatureVerifier = new SignatureVerifier($this->cache);
@@ -55,7 +58,10 @@ class WebhookController extends AbstractController {
         try {
             $request = $webhookRequestFactory->createFromRequestBody($request->getContent());
         } catch (RuntimeException $e) {
-            throw new BadRequestException();
+            $this->logger->warning(
+                sprintf('Refused webhook request due to %s: (%s) %s', get_class($e), $e->getCode(), $e->getMessage()),
+            );
+            return new Response('Invalid request', 400, ['Content-Type' => 'text/plain']);
         }
 
         $this->productUpdateService->updateProducts($request->getProduct());

@@ -4,6 +4,7 @@ namespace Pricemotion\Shopware\Subscriber;
 
 use Pricemotion\Sdk\Data\Ean;
 use Pricemotion\Sdk\InvalidArgumentException;
+use Pricemotion\Shopware\Extension\Content\Product\PricemotionProductEntity;
 use Pricemotion\Shopware\Extension\Content\Product\PricemotionProductExtension;
 use Shopware\Core\Content\Product\ProductEntity;
 use Shopware\Core\Framework\Context;
@@ -57,6 +58,13 @@ class ProductEanNormalizer implements EventSubscriberInterface {
             $ean = Ean::fromString((string) $product->getEan());
         } catch (InvalidArgumentException $e) {
             $ean = null;
+        }
+        $pricemotionExtension = $product->getExtension(PricemotionProductExtension::NAME);
+        if (
+            $pricemotionExtension instanceof PricemotionProductEntity &&
+            (string) $pricemotionExtension->getEan() === (string) $ean
+        ) {
+            return;
         }
         $this->productRepository->upsert(
             [

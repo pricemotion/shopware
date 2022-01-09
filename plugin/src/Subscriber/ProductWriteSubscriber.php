@@ -12,7 +12,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 class ProductWriteSubscriber implements EventSubscriberInterface {
     private MessageBusInterface $bus;
 
-    private $handledProductIds = [];
+    private array $handledProductIds = [];
 
     public function __construct(MessageBusInterface $bus) {
         $this->bus = $bus;
@@ -32,14 +32,8 @@ class ProductWriteSubscriber implements EventSubscriberInterface {
     }
 
     private function getProductIds(EntityWrittenEvent $entityWrittenEvent): \Generator {
-        if ($entityWrittenEvent->getEntityName() === 'product') {
+        if ($entityWrittenEvent->getEntityName() === PricemotionProductDefinition::ENTITY_NAME) {
             yield from $entityWrittenEvent->getIds();
-        } elseif ($entityWrittenEvent->getEntityName() === PricemotionProductDefinition::ENTITY_NAME) {
-            foreach ($entityWrittenEvent->getPayloads() as $payload) {
-                if (isset($payload['productId'])) {
-                    yield (string) $payload['productId'];
-                }
-            }
         }
     }
 

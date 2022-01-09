@@ -7,6 +7,7 @@ use Pricemotion\Sdk\Product\Settings;
 use Pricemotion\Shopware\Extension\Content\Product\PricemotionProductEntity;
 use Pricemotion\Shopware\Extension\Content\Product\PricemotionProductExtension;
 use Pricemotion\Shopware\SdkBridge\ProductAdapter;
+use Pricemotion\Shopware\Subscriber\ProductWriteSubscriber;
 use Psr\Log\LoggerInterface;
 use Shopware\Core\Checkout\Cart\Price\NetPriceCalculator;
 use Shopware\Core\Checkout\Cart\Price\Struct\QuantityPriceDefinition;
@@ -48,18 +49,22 @@ class ProductUpdateService {
         );
         // @phan-suppress-next-line PhanAccessMethodInternal
         $products = $this->productRepository->search($criteria, Context::createDefaultContext());
+        $this->logger->info(
+            sprintf('Found %d products matching EAN %s', $products->count(), $pricemotionProduct->getEan()),
+        );
         foreach ($products as $productEntity) {
             $this->updateProduct($productEntity, $pricemotionProduct);
         }
     }
 
     private function updateProduct(ProductEntity $productEntity, Product $pricemotionProduct): void {
-        $pricemotionExtension = $productEntity->getExtension('pricemotion');
+        $pricemotionExtension = $productEntity->getExtension(PricemotionProductExtension::NAME);
         if (!$pricemotionExtension instanceof PricemotionProductEntity) {
             return;
         }
         $settings = $pricemotionExtension->getSettings();
         if (empty($settings)) {
+            $this->logger->info(sprintf('Product %s does not have settings', $productEntity->getId()));
             return;
         }
         $settings = Settings::fromArray($settings);
@@ -68,28 +73,20 @@ class ProductUpdateService {
         if ($newPrice === null) {
             return;
         }
-        $priceCollection = $productEntity->getPrice();
-        $currencyPrice = $priceCollection->getCurrencyPrice(Defaults::CURRENCY);
-        if (!$currencyPrice) {
-            $currencyPrice = new Price(
-                Defaults::CURRENCY,
-                $this->getNetPrice($productEntity, $newPrice),
-                $newPrice,
-                true,
-            );
-            $priceCollection->add($currencyPrice);
-        } else {
-            $currencyPrice->setNet($this->getNetPrice($productEntity, $newPrice));
-            $currencyPrice->setGross($newPrice);
-            $currencyPrice->setLinked(true);
-        }
         // @phan-suppress-next-line PhanAccessMethodInternal
         $context = Context::createDefaultContext();
         $this->productRepository->upsert(
             [
                 [
                     'id' => $productEntity->getId(),
-                    'price' => $priceCollection,
+                    'price' => [
+                        [
+                            'currencyId' => Defaults::CURRENCY,
+                            'gross' => $newPrice,
+                            'net' => $this->getNetPrice($productEntity, $newPrice),
+                            'linked' => true,
+                        ],
+                    ],
                 ],
             ],
             $context,

@@ -3,6 +3,8 @@
 namespace Pricemotion\Shopware\MessageQueue\Handler;
 
 use Pricemotion\Shopware\Exception\ConfigurationException;
+use Pricemotion\Shopware\Extension\Content\Product\PricemotionProductEntity;
+use Pricemotion\Shopware\Extension\Content\Product\PricemotionProductExtension;
 use Pricemotion\Shopware\MessageQueue\Message\ProductWrittenMessage;
 use Pricemotion\Shopware\Service\WebhookService;
 use Psr\Log\LoggerInterface;
@@ -40,8 +42,11 @@ class TriggerWebhookHandler extends AbstractMessageHandler {
         if (!$product) {
             return;
         }
-        $ean = trim((string) $product->getEan());
-        if (!$ean) {
+        $pricemotion = $product->getExtension(PricemotionProductExtension::NAME);
+        if (!$pricemotion instanceof PricemotionProductEntity) {
+            return;
+        }
+        if (!$pricemotion->getEan()) {
             return;
         }
         try {
