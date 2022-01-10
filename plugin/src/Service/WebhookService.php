@@ -4,6 +4,7 @@ namespace Pricemotion\Shopware\Service;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use Pricemotion\Sdk\Data\Ean;
 use Pricemotion\Shopware\Exception\ConfigurationException;
 use Pricemotion\Shopware\KiboPricemotion;
 use Pricemotion\Shopware\Util\Base64;
@@ -57,7 +58,7 @@ class WebhookService {
         return $apiKey;
     }
 
-    public function trigger(string $ean): void {
+    public function trigger(Ean $ean): void {
         $this->post('/webhooks/trigger', ['ean' => $ean]);
     }
 

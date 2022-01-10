@@ -7,9 +7,9 @@ use Pricemotion\Sdk\Product\Settings;
 use Pricemotion\Shopware\Extension\Content\Product\PricemotionProductEntity;
 use Pricemotion\Shopware\Extension\Content\Product\PricemotionProductExtension;
 use Pricemotion\Shopware\SdkBridge\ProductAdapter;
-use Pricemotion\Shopware\Subscriber\ProductWriteSubscriber;
 use Psr\Log\LoggerInterface;
-use Shopware\Core\Checkout\Cart\Price\NetPriceCalculator;
+use Shopware\Core\Checkout\Cart\Price\GrossPriceCalculator;
+use Shopware\Core\Checkout\Cart\Price\Struct\CalculatedPrice;
 use Shopware\Core\Checkout\Cart\Price\Struct\QuantityPriceDefinition;
 use Shopware\Core\Checkout\Cart\Tax\Struct\TaxRule;
 use Shopware\Core\Checkout\Cart\Tax\Struct\TaxRuleCollection;
@@ -18,7 +18,6 @@ use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Pricing\CashRoundingConfig;
-use Shopware\Core\Framework\DataAbstractionLayer\Pricing\Price;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 
@@ -27,16 +26,16 @@ class ProductUpdateService {
 
     private LoggerInterface $logger;
 
-    private NetPriceCalculator $netPriceCalculator;
+    private GrossPriceCalculator $grossPriceCalculator;
 
     public function __construct(
         EntityRepositoryInterface $productRepository,
         LoggerInterface $logger,
-        NetPriceCalculator $netPriceCalculator
+        GrossPriceCalculator $grossPriceCalculator
     ) {
         $this->productRepository = $productRepository;
         $this->logger = $logger;
-        $this->netPriceCalculator = $netPriceCalculator;
+        $this->grossPriceCalculator = $grossPriceCalculator;
     }
 
     public function updateProducts(Product $pricemotionProduct): void {
@@ -73,6 +72,7 @@ class ProductUpdateService {
         if ($newPrice === null) {
             return;
         }
+        $currentPrice = $productEntity->getCurrencyPrice(Defaults::CURRENCY);
         // @phan-suppress-next-line PhanAccessMethodInternal
         $context = Context::createDefaultContext();
         $this->productRepository->upsert(
@@ -85,6 +85,15 @@ class ProductUpdateService {
                             'gross' => $newPrice,
                             'net' => $this->getNetPrice($productEntity, $newPrice),
                             'linked' => true,
+                            'listPrice' =>
+                                $currentPrice && $currentPrice->getListPrice()
+                                    ? [
+                                        'currencyId' => $currentPrice->getListPrice()->getCurrencyId(),
+                                        'gross' => $currentPrice->getListPrice()->getGross(),
+                                        'net' => $currentPrice->getListPrice()->getNet(),
+                                        'linked' => $currentPrice->getListPrice()->getLinked(),
+                                    ]
+                                    : null,
                         ],
                     ],
                 ],
@@ -97,7 +106,15 @@ class ProductUpdateService {
         $taxRules = new TaxRuleCollection([new TaxRule($productEntity->getTax()->getTaxRate())]);
         $quantityPriceDefinition = new QuantityPriceDefinition($gross, $taxRules, 1);
         $config = new CashRoundingConfig(50, 0.01, true);
-        $net = $this->netPriceCalculator->calculate($quantityPriceDefinition, $config);
-        return $net->getUnitPrice();
+        $result = $this->grossPriceCalculator->calculate($quantityPriceDefinition, $config);
+        return $gross - $this->sumTaxes($result);
+    }
+
+    private function sumTaxes(CalculatedPrice $calculatedPrice): float {
+        $result = 0.0;
+        foreach ($calculatedPrice->getCalculatedTaxes() as $tax) {
+            $result += $tax->getTax();
+        }
+        return $result;
     }
 }

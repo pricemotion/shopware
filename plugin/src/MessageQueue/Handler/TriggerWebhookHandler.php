@@ -46,7 +46,8 @@ class TriggerWebhookHandler extends AbstractMessageHandler {
         if (!$pricemotion instanceof PricemotionProductEntity) {
             return;
         }
-        if (!$pricemotion->getEan()) {
+        $ean = $pricemotion->getEan();
+        if (!$ean) {
             return;
         }
         try {
