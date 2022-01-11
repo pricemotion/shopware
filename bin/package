@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+ref=HEAD
+tag=$(git describe "$ref")
+
+tmp=$(mktemp -d)
+cleanup() { rm -rf "$tmp"; }
+trap cleanup EXIT
+
+mkdir -p dist
+dest="$PWD/dist/pricemotion-shopware-$tag.zip"
+
+git archive "$ref" plugin | tar x -C "$tmp"
+
+sdk=plugin/sdk
+sdk_files=(autoload.php src)
+read -r _ _ plugin_ref _ < <(git ls-tree -d "$ref" "$sdk")
+(cd "$sdk" && git archive --prefix "$sdk/" "$plugin_ref" "${sdk_files[@]}") | tar x -C "$tmp"
+
+cd "$tmp"
+mv plugin KiboPricemotion
+zip -r9q plugin.zip KiboPricemotion >&2
+mv plugin.zip "$dest"
+
+echo "$dest"
