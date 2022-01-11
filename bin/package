@@ -3,7 +3,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-ref=HEAD
+ref=$(git rev-parse HEAD)
 tag=$(git describe "$ref")
 
 tmp=$(mktemp -d)
