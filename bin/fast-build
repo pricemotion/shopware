@@ -1,14 +1,7 @@
 #!/usr/bin/env bash
 
 set -euo pipefail
+cd "$(dirname "$0")/.."
 
-root="$(cd "$(dirname "$0")/.." && pwd)"
-if [[ $root != /data ]]; then
-	exec dexec "$0" "$@"
-fi
-
-cd "$root/shopware/vendor/shopware/administration/Resources/app/administration"
-PROJECT_ROOT="$root/shopware" npm run build
-
-cd "$root/shopware"
-bin/console asset:install
+make
+rsync -a plugin/src/Resources/public/ shopware/public/bundles/kibopricemotion
