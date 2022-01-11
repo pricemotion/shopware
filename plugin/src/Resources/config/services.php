@@ -23,7 +23,7 @@ return function (ContainerConfigurator $configurator): void {
 
     $services->instanceof(AbstractController::class)->public();
 
-    $services->load('Pricemotion\\Shopware\\', '../src/*');
+    $services->load('Pricemotion\\Shopware\\', '../src/*')->exclude('../src/Resources/*');
 
     $services->set(PricemotionProductExtension::class)->tag('shopware.entity.extension');
     $services->set(PricemotionProductDefinition::class)->tag('shopware.entity.definition');
