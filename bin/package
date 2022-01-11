@@ -4,7 +4,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 ref=$(git rev-parse HEAD)
-tag=$(git describe "$ref")
+tag=$(git describe --tags --exact-match "$ref")
 
 tmp=$(mktemp -d)
 cleanup() { rm -rf "$tmp"; }
