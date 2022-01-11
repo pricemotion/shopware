@@ -13,12 +13,14 @@ trap cleanup EXIT
 mkdir -p dist
 dest="$PWD/dist/pricemotion-shopware-$tag.zip"
 
-git archive "$ref" plugin | tar x -C "$tmp"
+git archive "$ref" | tar x -C "$tmp"
 
 sdk=plugin/sdk
 sdk_files=(autoload.php src)
 read -r _ _ plugin_ref _ < <(git ls-tree -d "$ref" "$sdk")
 (cd "$sdk" && git archive --prefix "$sdk/" "$plugin_ref" "${sdk_files[@]}") | tar x -C "$tmp"
+
+make -C "$tmp"
 
 cd "$tmp/plugin"
 jq --arg v "$tag" '.version = $v' < composer.json > composer.json~
