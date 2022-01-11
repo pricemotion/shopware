@@ -1,3 +1,4 @@
+/dev
 /mutagen.yml.lock
 /node_modules
 /plugin/src/Command/TestCommand.php
