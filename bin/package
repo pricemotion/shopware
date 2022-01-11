@@ -28,7 +28,7 @@ sdk_files=(autoload.php src)
 read -r _ _ plugin_ref _ < <(git ls-tree -d "$ref" "$sdk")
 (cd "$sdk" && git archive --prefix "$sdk/" "$plugin_ref" "${sdk_files[@]}") | tar x -C "$tmp"
 
-make -C "$tmp"
+make -C "$tmp" >&2
 
 cd "$tmp/plugin"
 jq --arg v "$tag" '.version = $v' < composer.json > composer.json~
