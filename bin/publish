@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+if [[ $# -eq 0 ]]; then
+	ref=HEAD
+elif [[ $# -eq 1 ]]; then
+	ref="$1"
+else
+	echo "Usage: $0 [HEAD]" >&2
+	exit 1
+fi
+
+repo=git@github.com:pricemotion/shopware
+ref=$(git rev-parse "$ref")
+tag=$(git describe --exact-match --tags "$ref")
+
+git push "$repo" master "$tag"
+
+package=$(bin/package "$ref")
+
+hub release create -d -a "$package" -m "Pricemotion for Shopware 6 v$tag" "$tag"
