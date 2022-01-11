@@ -3,7 +3,15 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-ref=$(git rev-parse HEAD)
+if [[ $# -eq 0 ]]; then
+	ref=$(git rev-parse HEAD)
+elif [[ $# -eq 1 ]]; then
+	ref=$1
+else
+	echo "Usage: $0 [HEAD]" >&2
+	exit 1
+fi
+
 tag=$(git describe --tags --exact-match "$ref")
 
 tmp=$(mktemp -d)
