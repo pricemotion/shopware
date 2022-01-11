@@ -66,6 +66,7 @@ Component.register('sw-product-detail-pricemotion', {
       token,
       ean: this.ean,
       settings: this.getExtension().settings,
+      locale: this.$i18n.locale,
     });
     this.url = url.toString();
   },
