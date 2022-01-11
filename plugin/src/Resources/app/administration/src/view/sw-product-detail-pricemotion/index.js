@@ -3,7 +3,7 @@ import template from './sw-product-detail-pricemotion.html.twig';
 const { Component } = Shopware;
 const { mapState } = Component.getComponentHelper();
 const cacheBuster = Date.now();
-let widgetUrlPromise;
+let widgetUrlCache;
 
 Component.register('sw-product-detail-pricemotion', {
   template,
@@ -102,14 +102,19 @@ Component.register('sw-product-detail-pricemotion', {
         .create());
     },
     getWidgetUrl() {
-      if (widgetUrlPromise) {
-        return widgetUrlPromise;
+      const product = this.product;
+      if (widgetUrlCache && widgetUrlCache.product === product) {
+        return widgetUrlCache.promise;
       }
-      widgetUrlPromise = this.pricemotionApiService.getWidgetUrl();
-      widgetUrlPromise.catch(() => {
-        widgetUrlPromise = undefined;
+      const promise = this.pricemotionApiService.getWidgetUrl();
+      promise.catch(() => {
+        widgetUrlCache = undefined;
       });
-      return widgetUrlPromise;
+      widgetUrlCache = {
+        promise,
+        product,
+      };
+      return promise;
     },
   },
 });
