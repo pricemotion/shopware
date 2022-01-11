@@ -4,7 +4,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 if [[ $# -eq 0 ]]; then
-	ref=$(git rev-parse HEAD)
+	ref=HEAD
 elif [[ $# -eq 1 ]]; then
 	ref=$1
 else
@@ -12,6 +12,7 @@ else
 	exit 1
 fi
 
+ref=$(git rev-parse "$ref")
 tag=$(git describe --tags --exact-match "$ref")
 
 tmp=$(mktemp -d)
