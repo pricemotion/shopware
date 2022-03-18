@@ -6,15 +6,13 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use Pricemotion\Sdk\Data\Ean;
 use Pricemotion\Shopware\Exception\ConfigurationException;
-use Pricemotion\Shopware\KiboPricemotion;
 use Pricemotion\Shopware\Util\Base64;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
-use Shopware\Core\System\SystemConfig\SystemConfigService;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class WebhookService {
-    private SystemConfigService $config;
+    private ConfigService $config;
 
     private UrlGeneratorInterface $urlGenerator;
 
@@ -22,11 +20,7 @@ class WebhookService {
 
     private Client $httpClient;
 
-    public function __construct(
-        SystemConfigService $config,
-        UrlGeneratorInterface $urlGenerator,
-        LoggerInterface $logger
-    ) {
+    public function __construct(ConfigService $config, UrlGeneratorInterface $urlGenerator, LoggerInterface $logger) {
         $this->config = $config;
         $this->urlGenerator = $urlGenerator;
         $this->logger = $logger;
@@ -44,18 +38,10 @@ class WebhookService {
         return $this->urlGenerator->generate(
             'pricemotion.webhook',
             [
-                'apiKeyDigest' => Base64::encode(hash('sha256', $this->getApiKey(), true)),
+                'apiKeyDigest' => Base64::encode(hash('sha256', $this->config->getApiKey(), true)),
             ],
             UrlGeneratorInterface::ABSOLUTE_URL,
         );
-    }
-
-    private function getApiKey(): string {
-        $apiKey = trim($this->config->getString(KiboPricemotion::CONFIG_API_KEY));
-        if (empty($apiKey)) {
-            throw new ConfigurationException('No API key is configured');
-        }
-        return $apiKey;
     }
 
     public function trigger(Ean $ean): void {
@@ -64,7 +50,7 @@ class WebhookService {
 
     private function post(string $path, array $data): ResponseInterface {
         $requestOptions = [
-            'auth' => [$this->getApiKey(), ''],
+            'auth' => [$this->config->getApiKey(), ''],
             'json' => $data,
             'connect_timeout' => 10,
             'read_timeout' => 10,
