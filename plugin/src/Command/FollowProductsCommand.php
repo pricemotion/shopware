@@ -10,6 +10,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 class FollowProductsCommand extends Command {
     protected static $defaultName = 'pricemotion:follow-products';
 
+    protected static $defaultDescription = 'Subscribe to updates from Pricemotion for products that have price rules';
+
     private FollowProductsService $followProducts;
 
     public function __construct(FollowProductsService $followProducts) {
