@@ -38,7 +38,7 @@ class FollowProductsService {
     public function followProducts(): void {
         $client = new Client($this->config->getApiKey());
         $eans = $this->getEansToFollow();
-        $this->logger->info('Subscribing to EANs: ' . implode(', ', $eans->toArray()));
+        $this->logger->info(sprintf('Subscribing to %d EANs', $eans->count()));
         $client->followProducts($eans);
     }
 
