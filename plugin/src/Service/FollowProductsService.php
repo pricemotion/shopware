@@ -12,8 +12,11 @@ use Psr\Log\LoggerInterface;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\NotFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\RangeFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
+use Shopware\Core\Framework\Uuid\Uuid;
 
 class FollowProductsService {
     private $config;
@@ -58,7 +61,7 @@ class FollowProductsService {
             if (!$ean) {
                 continue;
             }
-            $eans[] = $ean;
+            $eans[$ean->toString()] = $ean;
         }
         return new EanCollection($eans);
     }
@@ -68,13 +71,23 @@ class FollowProductsService {
         $item = null;
         do {
             $criteria = new Criteria();
-            $criteria->setLimit(1); // TODO -- Bump limit
-            $criteria->addSorting(new FieldSorting('id'));
+            $criteria->setLimit(1000);
+            $criteria->addSorting(new FieldSorting('product.id'));
+            $criteria->addFilter(
+                new NotFilter(NotFilter::CONNECTION_OR, [
+                    new EqualsFilter(PricemotionProductExtension::NAME . '.settings', null),
+                ]),
+            );
             if ($item) {
-                $criteria->addFilter(new RangeFilter('id', [RangeFilter::GT => $item->getId()]));
+                $criteria->addFilter(
+                    new RangeFilter('product.id', [RangeFilter::GT => Uuid::fromHexToBytes($item->getId())]),
+                );
             }
-            /** @phan-suppress-next-line PhanAccessMethodInternal */
-            $result = $this->productRepository->search($criteria, Context::createDefaultContext())->getEntities();
+            $result = $this->productRepository
+                /** @phan-suppress-next-line PhanAccessMethodInternal */
+                ->search($criteria, Context::createDefaultContext())
+                ->getEntities()
+                ->getElements();
             foreach ($result as $item) {
                 yield $item;
             }
