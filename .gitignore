@@ -2,5 +2,7 @@
 /dist
 /mutagen.yml.lock
 /node_modules
+/plugin/composer.lock
 /plugin/src/Command/TestCommand.php
+/plugin/vendor
 /shopware
