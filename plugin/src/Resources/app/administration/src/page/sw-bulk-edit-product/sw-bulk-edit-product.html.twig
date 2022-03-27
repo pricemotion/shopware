@@ -7,6 +7,12 @@
         position-identifier="sw-bulk-edit-product-pricemotion"
         title="Pricemotion"
     >
+        <sw-bulk-edit-change-type-field-renderer
+            :form-fields="pricemotionFormFields"
+            :bulk-edit-data="bulkEditProduct"
+            :entity="product"
+        >
+        </sw-bulk-edit-change-type-field-renderer>
     </sw-card>
 
 {% endblock %}
