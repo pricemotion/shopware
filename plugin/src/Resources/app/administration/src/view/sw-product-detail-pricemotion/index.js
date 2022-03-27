@@ -1,7 +1,8 @@
 import template from './sw-product-detail-pricemotion.html.twig';
+import { settingsValid } from '../../symbols.js';
 
 const { Component } = Shopware;
-const { mapState, mapGetters } = Component.getComponentHelper();
+const { mapState } = Component.getComponentHelper();
 
 Component.register('sw-product-detail-pricemotion', {
   template,
@@ -20,11 +21,13 @@ Component.register('sw-product-detail-pricemotion', {
   },
   computed: {
     ...mapState('swProductDetail', ['product']),
-    ...mapGetters('swProductDetail', ['isLoading']),
     ean() {
       return (this.product?.ean || '').replace(/^\s+|\s+$/g, '');
     },
     widgetParams() {
+      if (!this.product || !this.product.id) {
+        return;
+      }
       return {
         ean: this.ean,
         settings: this.getExtension().settings,
@@ -38,6 +41,7 @@ Component.register('sw-product-detail-pricemotion', {
         .create());
     },
     updateProductSettings(message) {
+      this.getExtension()[settingsValid] = message.isValid;
       if (message.isValid) {
         this.getExtension().settings = message.value;
       }

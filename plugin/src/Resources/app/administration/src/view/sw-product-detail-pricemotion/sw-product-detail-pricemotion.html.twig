@@ -1,6 +1,6 @@
 <sw-card :large="true">
     <pricemotion-widget
-        v-if="!isLoading"
+        v-if="widgetParams"
         path="/widget"
         :params="widgetParams"
         @pricemotion:updateProductSettings="updateProductSettings"
