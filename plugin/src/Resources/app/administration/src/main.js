@@ -1,6 +1,7 @@
+import './component/pricemotion-bulk-edit-form-field';
+import './page/sw-bulk-edit-product';
 import './page/sw-product-detail';
 import './view/sw-product-detail-pricemotion';
-import './page/sw-bulk-edit-product';
 import PricemotionApiService from './core/service/api/pricemotion.api.service';
 
 const { Module, Application } = Shopware;

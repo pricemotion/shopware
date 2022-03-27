@@ -1,8 +1,10 @@
 import template from './sw-bulk-edit-product.html.twig';
 
+const { Component } = Shopware;
+
 const FORM_PRICEMOTION = 'pricemotion';
 
-Shopware.Component.override('sw-bulk-edit-product', {
+Component.override('sw-bulk-edit-product', {
   template,
   computed: {
     pricemotionFormFields() {
@@ -13,6 +15,7 @@ Shopware.Component.override('sw-bulk-edit-product', {
             allowOverwrite: true,
             allowClear: true,
             changeLabel: this.$tc('sw-bulk-edit.product.customFields.changeLabel', 0, { name: 'Pricemotion' }),
+            componentName: 'pricemotion-bulk-edit-form-field',
           },
         },
       ];
