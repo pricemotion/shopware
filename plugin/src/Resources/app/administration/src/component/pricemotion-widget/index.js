@@ -3,12 +3,12 @@ import onSystemConfigSave from './onSystemConfigSave.js';
 
 const { Component } = Shopware;
 const cacheBuster = Date.now();
-let widgetUrlCache;
+let widgetUrlPromise;
 
 onSystemConfigSave(() => {
-  if (!widgetUrlCache) return;
+  if (!widgetUrlPromise) return;
   console.log('[Pricemotion] System config was saved; clearing widget URL cache');
-  widgetUrlCache = undefined;
+  widgetUrlPromise = undefined;
 });
 
 Component.register('pricemotion-widget', {
@@ -86,17 +86,14 @@ Component.register('pricemotion-widget', {
       });
     },
     getWidgetUrl() {
-      // TODO -- Reset on config change
-      if (widgetUrlCache) {
-        return widgetUrlCache.promise;
+      if (widgetUrlPromise) {
+        return widgetUrlPromise;
       }
       const promise = this.pricemotionApiService.getWidgetUrl();
       promise.catch(() => {
-        widgetUrlCache = undefined;
+        widgetUrlPromise = undefined;
       });
-      widgetUrlCache = {
-        promise,
-      };
+      widgetUrlPromise = promise;
       return promise;
     },
   },
