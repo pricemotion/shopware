@@ -1,0 +1,14 @@
+<div class="pricemotion-widget">
+    <div v-if="loading" style="padding: 80px 0">
+        <sw-loader />
+    </div>
+    <iframe
+        ref="iframe"
+        :src="url || 'about:blank'"
+        :style="{
+            border: 0,
+            width: '100%',
+            height: loading ? '0' : `${iframeHeight}px`
+        }"
+    ></iframe>
+</div>

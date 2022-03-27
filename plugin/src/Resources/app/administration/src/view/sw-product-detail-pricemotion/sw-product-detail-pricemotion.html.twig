@@ -1,14 +1,7 @@
 <sw-card :large="true">
-    <div v-if="loading" style="padding: 80px 0">
-        <sw-loader />
-    </div>
-    <iframe
-        ref="iframe"
-        :src="url || 'about:blank'"
-        :style="{
-            border: 0,
-            width: '100%',
-            height: loading ? '0' : `${iframeHeight}px`
-        }"
-    ></iframe>
+    <pricemotion-widget
+        v-if="!isLoading"
+        :params="widgetParams"
+        @pricemotion:updateProductSettings="updateProductSettings"
+    />
 </sw-card>

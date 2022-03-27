@@ -1,4 +1,5 @@
 import './component/pricemotion-bulk-edit-form-field';
+import './component/pricemotion-widget';
 import './page/sw-bulk-edit-product';
 import './page/sw-product-detail';
 import './view/sw-product-detail-pricemotion';
