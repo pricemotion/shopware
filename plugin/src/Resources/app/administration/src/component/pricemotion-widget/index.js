@@ -6,6 +6,8 @@ const cacheBuster = Date.now();
 let widgetUrlCache;
 
 onSystemConfigSave(() => {
+  if (!widgetUrlCache) return;
+  console.log('[Pricemotion] System config was saved; clearing widget URL cache');
   widgetUrlCache = undefined;
 });
 
