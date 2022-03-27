@@ -6,9 +6,9 @@ export default class PricemotionApiService extends Classes.ApiService {
     this.name = 'pricemotionService';
   }
 
-  async getWidgetUrl() {
+  async getAppUrl() {
     const headers = this.getBasicHeaders();
-    const response = await this.httpClient.post(`${this.getApiBasePath()}/get-widget-url`, {}, { headers });
+    const response = await this.httpClient.post(`${this.getApiBasePath()}/get-app-url`, {}, { headers });
     return this.constructor.handleResponse(response);
   }
 }

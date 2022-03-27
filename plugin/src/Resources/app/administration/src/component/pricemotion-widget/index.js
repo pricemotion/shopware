@@ -3,18 +3,19 @@ import onSystemConfigSave from './onSystemConfigSave.js';
 
 const { Component } = Shopware;
 const cacheBuster = Date.now();
-let widgetUrlPromise;
+let appUrlPromise;
 
 onSystemConfigSave(() => {
-  if (!widgetUrlPromise) return;
+  if (!appUrlPromise) return;
   console.log('[Pricemotion] System config was saved; clearing widget URL cache');
-  widgetUrlPromise = undefined;
+  appUrlPromise = undefined;
 });
 
 Component.register('pricemotion-widget', {
   template,
   inject: ['pricemotionApiService'],
   props: {
+    path: String,
     params: Object,
   },
   data() {
@@ -28,8 +29,8 @@ Component.register('pricemotion-widget', {
     this.installMessageHandler();
   },
   async mounted() {
-    const { url: baseUrl, token } = await this.getWidgetUrl();
-    const url = new URL(baseUrl);
+    const { url: baseUrl, token } = await this.getAppUrl();
+    const url = new URL(baseUrl + this.path);
     url.search = new URLSearchParams({
       t: cacheBuster,
       assetVersion: '1.3',
@@ -85,15 +86,15 @@ Component.register('pricemotion-widget', {
         removeEventListener('message', handler);
       });
     },
-    getWidgetUrl() {
-      if (widgetUrlPromise) {
-        return widgetUrlPromise;
+    getAppUrl() {
+      if (appUrlPromise) {
+        return appUrlPromise;
       }
-      const promise = this.pricemotionApiService.getWidgetUrl();
+      const promise = this.pricemotionApiService.getAppUrl();
       promise.catch(() => {
-        widgetUrlPromise = undefined;
+        appUrlPromise = undefined;
       });
-      widgetUrlPromise = promise;
+      appUrlPromise = promise;
       return promise;
     },
   },

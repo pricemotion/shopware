@@ -21,11 +21,11 @@ class ApiController extends AbstractController {
     }
 
     /**
-     * @Route("/api/pricemotion/get-widget-url", methods={"POST"})
+     * @Route("/api/pricemotion/get-app-url", methods={"POST"})
      */
-    public function getWidgetUrl(): JsonResponse {
+    public function getAppUrl(): JsonResponse {
         return new JsonResponse([
-            'url' => 'https://www.pricemotion.nl/app/widget',
+            'url' => 'https://www.pricemotion.nl/app',
             'token' => $this->getApiToken(),
         ]);
     }
