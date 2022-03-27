@@ -12,8 +12,6 @@ Component.override('sw-bulk-edit-product', {
         {
           name: FORM_PRICEMOTION,
           config: {
-            allowOverwrite: true,
-            allowClear: true,
             changeLabel: this.$tc('sw-bulk-edit.product.customFields.changeLabel', 0, { name: 'Pricemotion' }),
             componentName: 'pricemotion-bulk-edit-form-field',
           },
