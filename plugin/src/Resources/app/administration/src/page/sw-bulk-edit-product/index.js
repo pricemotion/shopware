@@ -6,14 +6,13 @@ Shopware.Component.override('sw-bulk-edit-product', {
   template,
   computed: {
     pricemotionFormFields() {
-      console.log('pricemotionFormFields');
       return [
         {
           name: FORM_PRICEMOTION,
           config: {
             allowOverwrite: true,
             allowClear: true,
-            changeLabel: this.$tc('pricemotion.bulkChangeLabel'),
+            changeLabel: this.$tc('sw-bulk-edit.product.customFields.changeLabel', 0, { name: 'Pricemotion' }),
           },
         },
       ];
