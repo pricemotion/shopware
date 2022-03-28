@@ -1,11 +1,12 @@
 import template from './sw-bulk-edit-product.html.twig';
 
-const { Component } = Shopware;
+const { Component, Mixin } = Shopware;
 
 const FORM_PRICEMOTION = 'pricemotion';
 
 Component.override('sw-bulk-edit-product', {
   template,
+  mixins: [Mixin.getByName('notification')],
   computed: {
     pricemotionFormFields() {
       return [
@@ -23,6 +24,17 @@ Component.override('sw-bulk-edit-product', {
     loadBulkEditData() {
       this.$super('loadBulkEditData');
       this.defineBulkEditData(FORM_PRICEMOTION);
+    },
+    openModal() {
+      const todo = true;
+      if (todo) {
+        this.createNotificationError({
+          message: this.$tc('pricemotion.invalidSettingsError'),
+        });
+        return;
+      }
+
+      this.$super('openModal');
     },
   },
 });
