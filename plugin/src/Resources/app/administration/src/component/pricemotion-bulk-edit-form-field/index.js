@@ -7,7 +7,7 @@ Component.register('pricemotion-bulk-edit-form-field', {
   methods: {
     updateProductSettings(message) {
       if (message.isValid) {
-        this.$emit('input', message.value);
+        this.$emit('input', { settings: message.value });
       } else {
         this.$emit('input', false);
       }
