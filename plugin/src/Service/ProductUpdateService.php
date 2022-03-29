@@ -52,11 +52,30 @@ class ProductUpdateService {
             sprintf('Found %d products matching EAN %s', $products->count(), $pricemotionProduct->getEan()),
         );
         foreach ($products as $productEntity) {
-            $this->updateProduct($productEntity, $pricemotionProduct);
+            if (!$productEntity instanceof ProductEntity) {
+                throw new \LogicException('Product repository should return ProductEntity instances');
+            }
+            $this->updateLowestPrice($productEntity, $pricemotionProduct);
+            $this->applyPriceRules($productEntity, $pricemotionProduct);
         }
     }
 
-    private function updateProduct(ProductEntity $productEntity, Product $pricemotionProduct): void {
+    private function updateLowestPrice(ProductEntity $productEntity, Product $pricemotionProduct): void {
+        $this->productRepository->upsert(
+            [
+                [
+                    'id' => $productEntity->getId(),
+                    PricemotionProductExtension::NAME => [
+                        'lowest_price' => $pricemotionProduct->getLowestPrice(),
+                        'refreshed_at' => new \DateTimeImmutable(),
+                    ],
+                ],
+            ],
+            Context::createDefaultContext(), // @phan-suppress-current-line PhanAccessMethodInternal
+        );
+    }
+
+    private function applyPriceRules(ProductEntity $productEntity, Product $pricemotionProduct): void {
         $pricemotionExtension = $productEntity->getExtension(PricemotionProductExtension::NAME);
         if (!$pricemotionExtension instanceof PricemotionProductEntity) {
             return;
