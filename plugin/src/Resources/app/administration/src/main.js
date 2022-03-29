@@ -2,6 +2,7 @@ import './component/pricemotion-bulk-edit-form-field';
 import './component/pricemotion-widget';
 import './page/sw-bulk-edit-product';
 import './page/sw-product-detail';
+import './page/sw-product-list';
 import './view/sw-product-detail-pricemotion';
 import PricemotionApiService from './core/service/api/pricemotion.api.service';
 
