@@ -26,8 +26,7 @@ Component.override('sw-bulk-edit-product', {
       this.defineBulkEditData(FORM_PRICEMOTION);
     },
     openModal() {
-      const todo = true;
-      if (todo) {
+      if (this.product.pricemotion === false) {
         this.createNotificationError({
           message: this.$tc('pricemotion.invalidSettingsError'),
         });
