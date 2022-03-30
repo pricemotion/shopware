@@ -61,6 +61,7 @@ class ProductUpdateService {
     }
 
     private function updateLowestPrice(ProductEntity $productEntity, Product $pricemotionProduct): void {
+        $this->logger->debug(sprintf('Updating lowest price on product %s', $productEntity->getId()));
         $this->productRepository->upsert(
             [
                 [

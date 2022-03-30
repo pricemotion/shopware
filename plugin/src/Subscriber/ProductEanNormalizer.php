@@ -6,6 +6,7 @@ use Pricemotion\Sdk\Data\Ean;
 use Pricemotion\Sdk\InvalidArgumentException;
 use Pricemotion\Shopware\Extension\Content\Product\PricemotionProductEntity;
 use Pricemotion\Shopware\Extension\Content\Product\PricemotionProductExtension;
+use Psr\Log\LoggerInterface;
 use Shopware\Core\Content\Product\ProductEntity;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
@@ -19,8 +20,11 @@ class ProductEanNormalizer implements EventSubscriberInterface {
 
     private bool $inHandler = false;
 
-    public function __construct(EntityRepositoryInterface $productRepository) {
+    private $logger;
+
+    public function __construct(EntityRepositoryInterface $productRepository, LoggerInterface $logger) {
         $this->productRepository = $productRepository;
+        $this->logger = $logger;
     }
 
     public static function getSubscribedEvents(): array {
@@ -66,6 +70,7 @@ class ProductEanNormalizer implements EventSubscriberInterface {
         ) {
             return;
         }
+        $this->logger->debug(sprintf('Setting EAN and resetting data for product %s', $product->getId()));
         $this->productRepository->upsert(
             [
                 [
