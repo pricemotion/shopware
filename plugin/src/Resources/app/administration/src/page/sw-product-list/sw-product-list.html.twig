@@ -1,0 +1,9 @@
+{% block sw_product_list_grid_columns %}
+
+    {% parent %}
+
+    <template #column-extensions.pricemotion.lowestPrice="{ item }">
+        {{ item.extensions.pricemotion.lowestPrice|currency('EUR') }}
+    </template>
+
+{% endblock %}
