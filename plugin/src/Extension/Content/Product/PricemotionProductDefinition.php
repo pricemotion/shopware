@@ -8,6 +8,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\Field\DateTimeField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\FkField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\PrimaryKey;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\Flag\Required;
+use Shopware\Core\Framework\DataAbstractionLayer\Field\FloatField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\JsonField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\OneToOneAssociationField;
 use Shopware\Core\Framework\DataAbstractionLayer\Field\StringField;
@@ -34,6 +35,8 @@ class PricemotionProductDefinition extends EntityDefinition {
             new StringField('ean', 'ean'),
             new JsonField('settings', 'settings'),
             new DateTimeField('applied_at', 'appliedAt'),
+            new FloatField('lowest_price', 'lowestPrice'),
+            new DateTimeField('refreshed_at', 'refreshedAt'),
         ]);
     }
 }

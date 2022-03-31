@@ -18,6 +18,10 @@ class PricemotionProductEntity extends Entity {
 
     protected ?\DateTimeImmutable $appliedAt;
 
+    protected ?float $lowestPrice;
+
+    protected ?\DateTimeImmutable $refreshedAt;
+
     public function getProductId(): string {
         return $this->productId;
     }
@@ -39,5 +43,13 @@ class PricemotionProductEntity extends Entity {
 
     public function getAppliedAt(): ?\DateTimeImmutable {
         return $this->appliedAt;
+    }
+
+    public function getLowestPrice(): ?float {
+        return $this->lowestPrice;
+    }
+
+    public function getRefreshedAt(): ?\DateTimeImmutable {
+        return $this->refreshedAt;
     }
 }
