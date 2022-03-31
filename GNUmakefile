@@ -1,8 +1,11 @@
 JS_TARGET := plugin/src/Resources/public/administration/js/kibo-pricemotion.js
 JS_SOURCES := $(shell find plugin/src/Resources/app/administration -type f)
 
-all : $(JS_TARGET) plugin/vendor
+all : dist plugin/vendor
 .PHONY : all
+
+dist : $(JS_TARGET)
+.PHONY : dist
 
 watch :
 	rm -f $(JS_TARGET)
