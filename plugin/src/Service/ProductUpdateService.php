@@ -67,8 +67,8 @@ class ProductUpdateService {
                 [
                     'id' => $productEntity->getId(),
                     PricemotionProductExtension::NAME => [
-                        'lowest_price' => $pricemotionProduct->getLowestPrice(),
-                        'refreshed_at' => new \DateTimeImmutable(),
+                        'lowestPrice' => $pricemotionProduct->getLowestPrice(),
+                        'refreshedAt' => new \DateTimeImmutable(),
                     ],
                 ],
             ],
@@ -115,6 +115,9 @@ class ProductUpdateService {
                                     ]
                                     : null,
                         ],
+                    ],
+                    PricemotionProductExtension::NAME => [
+                        'appliedAt' => new \DateTimeImmutable(),
                     ],
                 ],
             ],

@@ -77,9 +77,9 @@ class ProductEanNormalizer implements EventSubscriberInterface {
                     'id' => $product->getId(),
                     PricemotionProductExtension::NAME => [
                         'ean' => $ean ? $ean->toString() : null,
-                        'applied_at' => null,
-                        'lowest_price' => null,
-                        'refreshed_at' => null,
+                        'appliedAt' => null,
+                        'lowestPrice' => null,
+                        'refreshedAt' => null,
                     ],
                 ],
             ],
