@@ -15,12 +15,10 @@
   "extra": {
     "shopware-plugin-class": "Pricemotion\\Shopware\\KiboPricemotion",
     "label": {
-      "de-DE": "Pricemotion",
-      "en-GB": "Pricemotion"
+      "2fbb5fe2e29a4d70aa5854ce7ce3e20b": "Pricemotion"
     },
     "description": {
-      "de-DE": "Integrate Pricemotion with your Shopware store",
-      "en-GB": "Integrate Pricemotion with your Shopware store"
+      "2fbb5fe2e29a4d70aa5854ce7ce3e20b": "Integrate Pricemotion with your Shopware store"
     }
   },
   "autoload": {
