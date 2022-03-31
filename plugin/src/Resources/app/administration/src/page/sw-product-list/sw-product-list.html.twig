@@ -2,8 +2,12 @@
 
     {% parent %}
 
+    <template #column-pricemotionHasPriceRule="{ item }">
+        <sw-color-badge :variant="hasPriceRule(item) ? 'success' : 'error'" rounded style="margin: 0" />
+    </template>
+
     <template #column-extensions.pricemotion.lowestPrice="{ item }">
-        {{ item.extensions.pricemotion.lowestPrice|currency('EUR') }}
+        {{ item.extensions.pricemotion?.lowestPrice|currency('EUR') }}
     </template>
 
 {% endblock %}

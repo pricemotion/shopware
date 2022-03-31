@@ -1,6 +1,7 @@
 {
   "pricemotion": {
     "invalidSettingsError": "Please check the Pricemotion settings for your product",
-    "columnLowestPrice": "Lowest price"
+    "columnLowestPrice": "Lowest price",
+    "columnPriceRule": "Price rule"
   }
 }
