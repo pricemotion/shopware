@@ -8,7 +8,7 @@ Application.addServiceProviderDecorator('systemConfigApiService', (systemConfigA
       const v = Reflect.get(target, prop, receiver);
       if (prop === 'batchSave') {
         return function (...args) {
-          const result = v.apply(this, ...args);
+          const result = v.apply(this, args);
           result.finally(() => {
             listeners.forEach((l) => {
               l();
