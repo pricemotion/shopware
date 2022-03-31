@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.1.0 - 2022-03-31
 
 - Register webhook and products with price rules with Pricemotion daily.
 - Add bulk edit functionality for price rules.
