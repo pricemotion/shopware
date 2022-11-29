@@ -62,6 +62,8 @@ class ProductUpdateService {
 
     private function updateLowestPrice(ProductEntity $productEntity, Product $pricemotionProduct): void {
         $this->logger->debug(sprintf('Updating lowest price on product %s', $productEntity->getId()));
+        // TODO -- Do not call upsert if lowestPrice is unchanged, and
+        // refreshedAt is set
         $this->productRepository->upsert(
             [
                 [
@@ -95,6 +97,7 @@ class ProductUpdateService {
         $currentPrice = $productEntity->getCurrencyPrice(Defaults::CURRENCY);
         // @phan-suppress-next-line PhanAccessMethodInternal
         $context = Context::createDefaultContext();
+        // TODO -- Do not call upsert if `gross` is unchanged
         $this->productRepository->upsert(
             [
                 [
