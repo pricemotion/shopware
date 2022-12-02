@@ -21,6 +21,10 @@ services:
       - mariadb:/var/lib/mysql
     ports:
       - 26741:3306
+    healthcheck:
+      test: ['CMD', '/usr/bin/mysql', '-e', '', 'shopware']
+      interval: 1s
+      start_period: 30s
 
 volumes:
   mariadb:
