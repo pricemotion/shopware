@@ -62,8 +62,22 @@ class ProductUpdateService {
 
     private function updateLowestPrice(ProductEntity $productEntity, Product $pricemotionProduct): void {
         $this->logger->debug(sprintf('Updating lowest price on product %s', $productEntity->getId()));
-        // TODO -- Do not call upsert if lowestPrice is unchanged, and
-        // refreshedAt is set
+        $pricemotion = $productEntity->getExtension(PricemotionProductExtension::NAME);
+        if (
+            $pricemotion instanceof PricemotionProductEntity &&
+            $pricemotion->getRefreshedAt() &&
+            ($lowestPrice = $pricemotion->getLowestPrice()) !== null &&
+            abs($lowestPrice - $pricemotionProduct->getLowestPrice()) < 0.0001
+        ) {
+            $this->logger->debug(
+                sprintf(
+                    'No change in lowest price %.2f for product %s, and refreshed at is already set',
+                    $lowestPrice,
+                    $productEntity->getId(),
+                ),
+            );
+            return;
+        }
         $this->productRepository->upsert(
             [
                 [
