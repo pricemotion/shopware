@@ -2,7 +2,6 @@ sync:
   defaults:
     ignore:
       paths:
-        - node_modules
         - shopware/var
   code:
     alpha: '.'
