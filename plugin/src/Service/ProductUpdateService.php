@@ -7,6 +7,7 @@ use Pricemotion\Sdk\Product\Settings;
 use Pricemotion\Shopware\Extension\Content\Product\PricemotionProductEntity;
 use Pricemotion\Shopware\Extension\Content\Product\PricemotionProductExtension;
 use Pricemotion\Shopware\SdkBridge\ProductAdapter;
+use Pricemotion\Shopware\Subscriber\ProductWriteSubscriber;
 use Psr\Log\LoggerInterface;
 use Shopware\Core\Checkout\Cart\Price\GrossPriceCalculator;
 use Shopware\Core\Checkout\Cart\Price\Struct\CalculatedPrice;
@@ -28,14 +29,18 @@ class ProductUpdateService {
 
     private GrossPriceCalculator $grossPriceCalculator;
 
+    private ProductWriteSubscriber $productWriteSubscriber;
+
     public function __construct(
         EntityRepositoryInterface $productRepository,
         LoggerInterface $logger,
-        GrossPriceCalculator $grossPriceCalculator
+        GrossPriceCalculator $grossPriceCalculator,
+        ProductWriteSubscriber $productWriteSubscriber
     ) {
         $this->productRepository = $productRepository;
         $this->logger = $logger;
         $this->grossPriceCalculator = $grossPriceCalculator;
+        $this->productWriteSubscriber = $productWriteSubscriber;
     }
 
     public function updateProducts(Product $pricemotionProduct): void {
@@ -78,17 +83,19 @@ class ProductUpdateService {
             );
             return;
         }
-        $this->productRepository->upsert(
-            [
+        $this->productWriteSubscriber->quietly(
+            fn() => $this->productRepository->upsert(
                 [
-                    'id' => $productEntity->getId(),
-                    PricemotionProductExtension::NAME => [
-                        'lowestPrice' => $pricemotionProduct->getLowestPrice(),
-                        'refreshedAt' => new \DateTimeImmutable(),
+                    [
+                        'id' => $productEntity->getId(),
+                        PricemotionProductExtension::NAME => [
+                            'lowestPrice' => $pricemotionProduct->getLowestPrice(),
+                            'refreshedAt' => new \DateTimeImmutable(),
+                        ],
                     ],
                 ],
-            ],
-            Context::createDefaultContext(), // @phan-suppress-current-line PhanAccessMethodInternal
+                Context::createDefaultContext(), // @phan-suppress-current-line PhanAccessMethodInternal
+            ),
         );
     }
 
@@ -111,33 +118,35 @@ class ProductUpdateService {
         $currentPrice = $productEntity->getCurrencyPrice(Defaults::CURRENCY);
         // @phan-suppress-next-line PhanAccessMethodInternal
         $context = Context::createDefaultContext();
-        $this->productRepository->upsert(
-            [
+        $this->productWriteSubscriber->quietly(
+            fn() => $this->productRepository->upsert(
                 [
-                    'id' => $productEntity->getId(),
-                    'price' => [
-                        [
-                            'currencyId' => Defaults::CURRENCY,
-                            'gross' => $newPrice,
-                            'net' => $this->getNetPrice($productEntity, $newPrice),
-                            'linked' => true,
-                            'listPrice' =>
-                                $currentPrice && $currentPrice->getListPrice()
-                                    ? [
-                                        'currencyId' => $currentPrice->getListPrice()->getCurrencyId(),
-                                        'gross' => $currentPrice->getListPrice()->getGross(),
-                                        'net' => $currentPrice->getListPrice()->getNet(),
-                                        'linked' => $currentPrice->getListPrice()->getLinked(),
-                                    ]
-                                    : null,
+                    [
+                        'id' => $productEntity->getId(),
+                        'price' => [
+                            [
+                                'currencyId' => Defaults::CURRENCY,
+                                'gross' => $newPrice,
+                                'net' => $this->getNetPrice($productEntity, $newPrice),
+                                'linked' => true,
+                                'listPrice' =>
+                                    $currentPrice && $currentPrice->getListPrice()
+                                        ? [
+                                            'currencyId' => $currentPrice->getListPrice()->getCurrencyId(),
+                                            'gross' => $currentPrice->getListPrice()->getGross(),
+                                            'net' => $currentPrice->getListPrice()->getNet(),
+                                            'linked' => $currentPrice->getListPrice()->getLinked(),
+                                        ]
+                                        : null,
+                            ],
+                        ],
+                        PricemotionProductExtension::NAME => [
+                            'appliedAt' => new \DateTimeImmutable(),
                         ],
                     ],
-                    PricemotionProductExtension::NAME => [
-                        'appliedAt' => new \DateTimeImmutable(),
-                    ],
                 ],
-            ],
-            $context,
+                $context,
+            ),
         );
     }
 

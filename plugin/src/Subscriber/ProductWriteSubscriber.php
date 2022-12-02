@@ -14,6 +14,8 @@ class ProductWriteSubscriber implements EventSubscriberInterface {
 
     private array $handledProductIds = [];
 
+    private int $disabled = 0;
+
     public function __construct(MessageBusInterface $bus) {
         $this->bus = $bus;
     }
@@ -38,6 +40,9 @@ class ProductWriteSubscriber implements EventSubscriberInterface {
     }
 
     private function dispatchMessageForProductId(string $productId): void {
+        if ($this->disabled) {
+            return;
+        }
         if (isset($this->handledProductIds[$productId])) {
             return;
         }
@@ -50,6 +55,16 @@ class ProductWriteSubscriber implements EventSubscriberInterface {
             if ($event instanceof EntityWrittenEvent) {
                 $this->onEntityWritten($event);
             }
+        }
+    }
+
+    public function quietly(\Closure $fn) {
+        $this->disabled++;
+
+        try {
+            return $fn();
+        } finally {
+            $this->disabled--;
         }
     }
 }
