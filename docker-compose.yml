@@ -31,5 +31,13 @@ services:
       interval: 1s
       start_period: 30s
 
+  cloudflared:
+    image: cloudflare/cloudflared:1299-cf87ec796995
+    command: tunnel --url http://php --http-host-header localhost:26740 --metrics 0.0.0.0:8080
+    links:
+      - php
+    ports:
+      - 26742:8080
+
 volumes:
   mariadb:
