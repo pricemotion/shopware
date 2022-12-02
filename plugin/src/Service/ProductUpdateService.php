@@ -97,7 +97,6 @@ class ProductUpdateService {
         $currentPrice = $productEntity->getCurrencyPrice(Defaults::CURRENCY);
         // @phan-suppress-next-line PhanAccessMethodInternal
         $context = Context::createDefaultContext();
-        // TODO -- Do not call upsert if `gross` is unchanged
         $this->productRepository->upsert(
             [
                 [
