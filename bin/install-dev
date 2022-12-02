@@ -6,7 +6,7 @@ cd "$(dirname "$0")/.."
 ln -sfnr plugin shopware/custom/plugins/KiboPricemotion
 
 dexec shopware/bin/console plugin:refresh
-dexec php -d memory_limit=256M shopware/bin/console plugin:install --activate KiboPricemotion
+dexec shopware/bin/console plugin:install --activate KiboPricemotion
 bin/clear-cache
 
 ln -sfnr plugin/src/Resources/public shopware/public/bundles/kibopricemotion
