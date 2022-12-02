@@ -4,6 +4,7 @@ namespace Pricemotion\Shopware\Service;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use Nyholm\Psr7\Uri;
 use Pricemotion\Sdk\Data\Ean;
 use Pricemotion\Shopware\Exception\ConfigurationException;
 use Pricemotion\Shopware\Util\Base64;
@@ -29,19 +30,43 @@ class WebhookService {
     public function registerWebhook(): void {
         $webhookUrl = $this->getWebhookUrl();
         $this->post('/webhooks', [
-            'url' => $webhookUrl,
+            'url' => (string) $webhookUrl,
         ]);
         $this->logger->info(sprintf('Registered Pricemotion webhook with URL %s', $webhookUrl));
     }
 
-    private function getWebhookUrl(): string {
-        return $this->urlGenerator->generate(
-            'pricemotion.webhook',
-            [
-                'apiKeyDigest' => Base64::encode(hash('sha256', $this->config->getApiKey(), true)),
-            ],
-            UrlGeneratorInterface::ABSOLUTE_URL,
+    private function getWebhookUrl(): Uri {
+        $url = new Uri(
+            $this->urlGenerator->generate(
+                'pricemotion.webhook',
+                [
+                    'apiKeyDigest' => Base64::encode(hash('sha256', $this->config->getApiKey(), true)),
+                ],
+                UrlGeneratorInterface::ABSOLUTE_URL,
+            ),
         );
+        if ($baseUrl = $this->getDevelopmentBaseUrl()) {
+            $url = $this->replaceAuthority($url, $baseUrl);
+        }
+        return $url;
+    }
+
+    private function getDevelopmentBaseUrl(): ?Uri {
+        $metricsUrl = getenv('PRICEMOTION_CLOUDFLARED_METRICS_URL');
+        if (!$metricsUrl) {
+            return null;
+        }
+        $response = $this->getHttpClient()->get($metricsUrl . '/quicktunnel');
+        $hostname = json_decode($response->getBody()->getContents(), false, JSON_THROW_ON_ERROR)->hostname;
+        return new Uri("https://{$hostname}");
+    }
+
+    private function replaceAuthority(Uri $url, Uri $newAuthority): Uri {
+        return $url
+            ->withScheme($newAuthority->getScheme())
+            ->withUserInfo($newAuthority->getUserInfo())
+            ->withHost($newAuthority->getHost())
+            ->withPort($newAuthority->getPort());
     }
 
     public function trigger(Ean $ean): void {

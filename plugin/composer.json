@@ -10,7 +10,8 @@
     }
   ],
   "require": {
-    "shopware/core": "6.4.*"
+    "shopware/core": "6.4.*",
+    "nyholm/psr7": "1.*"
   },
   "extra": {
     "shopware-plugin-class": "Pricemotion\\Shopware\\KiboPricemotion",

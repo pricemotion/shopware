@@ -8,6 +8,7 @@ services:
       APP_URL: http://localhost:26740
       APP_SECRET: shopware
       COMPOSER_HOME: /data/shopware/var/cache/composer
+      PRICEMOTION_CLOUDFLARED_METRICS_URL: http://cloudflared:8080
     volumes:
       - .:/data
       - ./docker/php/apache.conf:/etc/apache2/sites-available/000-default.conf

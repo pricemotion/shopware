@@ -4,6 +4,7 @@ $vendor = [
     'plugin/sdk',
     'plugin/vendor/doctrine/dbal/lib',
     'plugin/vendor/guzzlehttp/guzzle/src',
+    'plugin/vendor/nyholm/psr7',
     'plugin/vendor/psr/http-message',
     'plugin/vendor/psr/log',
     'plugin/vendor/shopware/core',
