@@ -3,6 +3,11 @@ version: '3.9'
 services:
   php:
     build: docker/php
+    environment:
+      DATABASE_URL: mysql://root@mariadb/shopware
+      APP_URL: http://localhost:26740
+      APP_SECRET: shopware
+      COMPOSER_HOME: /data/shopware/var/cache/composer
     volumes:
       - .:/data
       - ./docker/php/apache.conf:/etc/apache2/sites-available/000-default.conf

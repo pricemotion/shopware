@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+rm -rf shopware
+mkdir shopware
+
+bsdtar xf "$(nix-prefetch-url --print-path \
+	'https://releases.shopware.com/sw6/install_v6.4.17.2_4d2c85fb448571fa4f30edce635f33a67dda1d76.zip' \
+	'15lzfk6zafgxk77l2b33778554fl6qlc4k32hc6mi8q7rm7pf0g5' | tail -1)" \
+	-C shopware
+
+docker compose up --wait
+
+mysql -h127.0.0.1 -P26741 <<EOF
+	DROP DATABASE IF EXISTS shopware;
+	CREATE DATABASE shopware;
+EOF
+
+dexec shopware/bin/console system:install \
+	--shop-name=Pricemotion \
+	--shop-email=info@pricemotion.nl \
+	--basic-setup \
+	--shop-locale=nl-NL
+
+dexec shopware/bin/console user:change-password -p admin admin
+
+cat >&2 <<EOF
+Installation complete. :)
+
+Store front: http://localhost:26740
+
+Admin:    http://localhost:26740/admin
+Username: admin
+Password: admin
+EOF
