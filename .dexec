@@ -1,4 +1,4 @@
 [dexec]
-container=shopware_php_1
+container=shopware-php-1
 path=/data
 user=www-data
