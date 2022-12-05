@@ -12,8 +12,6 @@ use Symfony\Component\Messenger\MessageBusInterface;
 class ProductWriteSubscriber implements EventSubscriberInterface {
     private MessageBusInterface $bus;
 
-    private array $handledProductIds = [];
-
     private int $disabled = 0;
 
     public function __construct(MessageBusInterface $bus) {
@@ -43,11 +41,7 @@ class ProductWriteSubscriber implements EventSubscriberInterface {
         if ($this->disabled) {
             return;
         }
-        if (isset($this->handledProductIds[$productId])) {
-            return;
-        }
         $this->bus->dispatch(new ProductWrittenMessage($productId));
-        $this->handledProductIds[$productId] = true;
     }
 
     public function onEntitiesWritten(EntityWrittenContainerEvent $containerEvent): void {
