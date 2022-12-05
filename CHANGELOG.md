@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.1.1 - 2022-12-05
 
 - Prevent updates from Pricemotion from triggering an infinite update loop.
 
